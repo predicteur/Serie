@@ -8,11 +8,10 @@ Ce repository regroupe un ensemble de fonctions de traitement de séries tempore
 # Fonctions d'analyse d'une série
 ## Valeurs statistiques d'une série
 * **moyenne :** Valeur moyenne de la série
-
-ecartType : écrt-type de la série
+* **ecartType :** écart-type de la série
 ## Caractérisation de deux séries
 * **ecDiff :** valeur moyenne des écarts (valeur absolue) entre les deux séries 
-* **etDiff :** valeur moyenne des carés des écarts entre les deux séries  
+* **etDiff :** valeur moyenne des carrés des écarts entre les deux séries  
 ## Autre
 * **pr :** Affichage de la série
 * **autoCorrélation :** à venir 
