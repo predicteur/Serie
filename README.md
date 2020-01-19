@@ -20,9 +20,9 @@ L'objet Serie est composé des attributs suivants :
     * Série d'une longueur donnée avec les valeurs initialisées à une valeur donnée
     * Série d'une longueur donnée avec les valeurs initialisées par répartition entre un point de départ et un point d'arrivée
     * Série créée par recopie d'une autre série
-* **opérateurs :** Les opérations +, -, += et * sont surchargées pour combiner les valeurs de séries de même longueur. 
-Une opération supplémentaire | permet de regrouper deux séries. 
-L'opérteur d'affectation = est également surchargé pour copier une série dans une autre. Les valeurs des séries sont accessibles directement par l'opérateur []
+* **opérateurs :** Les opérateurs +, -, += et * sont surchargées pour combiner les valeurs de séries de même longueur. 
+Une opération supplémentaire (opérateur | surchargé) permet de regrouper deux séries. 
+L'affectation (opérateur = surchargé) est utilisée pour copier une série dans une autre. Les valeurs des séries sont accessibles directement (opérateur [] ).
 * **mise à jour :** Les fonctions sont les suivantes :
     * **sousSerie()** : Génération d'une série constituée d'un extrait d'une série
     * **init()** : idem constructeur
@@ -36,14 +36,14 @@ L'opérteur d'affectation = est également surchargé pour copier une série dan
     
 ## Fonctions d'analyse d'une série
 ### Valeurs statistiques d'une série
-* **moyenne()** :** Valeur moyenne de la série
-* **ecartType()** :** écart-type de la série
+* **moyenne()** : valeur moyenne de la série
+* **ecartType()** : écart-type de la série
 ### Caractérisation de deux séries
-* **ecDiff()** :** valeur moyenne des écarts (valeur absolue) entre les deux séries 
-* **etDiff()** :** valeur moyenne des carrés des écarts entre les deux séries  
+* **ecDiff()** : valeur moyenne des écarts (valeur absolue) entre les deux séries 
+* **etDiff()** : valeur moyenne des carrés des écarts entre les deux séries  
 ### Autre
-* **pr()** :** Affichage de la série
-* **autoCorrelation()** :** à venir 
+* **pr()** : affichage de la série
+* **autoCorrelation()** : à venir 
 
 ## Fonctions de transformation d'une série
 ### Fonctions de traitement
