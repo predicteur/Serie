@@ -1,12 +1,16 @@
-# Series
+# Serie
 Ce repository regroupe un ensemble de fonctions de traitement de séries temporelles. Elles sont écrites en C++ pour être utilisées sur des équipements d'acquisition de données (ex. ESP / Arduino).
+Les séries sont des objets composés d'une suite de valeurs de longueur dynamique. Elles disposent également d'un nom.
 
 # Fonctions de création et de combinaison
-* **init :** initialisation d'une série à partir du point de départ et du point d'arrivée
-* **combine :** Génération d'une série composée du cumul terme à terme des deux séries
-* **copie :** Génération d'une série par copie d'une série (duplication)
+* **constructeur :** Plusieurs modes de création sont possibles
+    * Série vide
+    * Série d'une longueur donnée avec les valeurs à 0
+    * Série d'une longueur donnée avec les valeurs initialisées à une valeur donnée
+    * Série d'une longueur donnée avec les valeurs initialisées par répartition entre un point de départ et un point d'arrivée
+    * Série créée par recopie d'une autre série
+* **opérateurs :** Les opérations +, -, += et * sont surchargées pour combiner les valeurs de séries de même longueur. Une opération supplémentaire | permet de regrouper deux séries. L'opérteur d'affectation = est également surchargé pour copier une série dans une autre. Les valeurs des séries sont accessibles directement par l'opérateur []
 * **sousSerie :** Génération d'une série constituée d'un extrait d'une série
-* **ajoute :** Génération d'une série composée de l'ajout des termes d'une série à une autre
 
 # Fonctions d'analyse d'une série
 ## Valeurs statistiques d'une série
