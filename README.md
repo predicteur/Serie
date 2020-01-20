@@ -28,7 +28,7 @@ L'affectation (opérateur = surchargé) est utilisée pour copier une série dan
     * **init()** : idem constructeur
     * **copie()** : idem constructeur de recopie
     * **setNom()** : modification du nom
-    * **setSerie()** : modification de l aliste des valeurs
+    * **setSerie()** : modification de la liste des valeurs
 * **consultation :** Les fonctions sont les suivantes :
     * **len()** : nombre de valeurs de la série
     * **lenom()** : nom de la série
@@ -40,7 +40,7 @@ L'affectation (opérateur = surchargé) est utilisée pour copier une série dan
 * **ecartType()** : écart-type de la série
 ### Caractérisation de deux séries
 * **ecDiff()** : valeur moyenne des écarts (valeur absolue) entre les deux séries 
-* **etDiff()** : valeur moyenne des carrés des écarts entre les deux séries  
+* **etDiff()** : racine carrée de la moyenne des carrés des écarts entre les deux séries  
 ### Autre
 * **pr()** : affichage de la série
 * **autoCorrelation()** : à venir 
