@@ -1,0 +1,58 @@
+#######################################
+# Syntax Coloring Map For Serie
+#######################################
+
+#######################################
+# Type names
+#######################################
+
+Serie	KEYWORD1	DATA_TYPE
+Compactor	KEYWORD1	DATA_TYPE
+Compressor	KEYWORD1	DATA_TYPE
+
+#######################################
+# Methods
+#######################################
+
+init	KEYWORD2
+setNom	KEYWORD2
+setSerie	KEYWORD2
+len	KEYWORD2
+lenom	KEYWORD2
+serie	KEYWORD2
+copie	KEYWORD2
+pr	KEYWORD2
+ecDiff	KEYWORD2
+etDiff	KEYWORD2
+moyenne	KEYWORD2
+ecartType	KEYWORD2
+ecretage	KEYWORD2
+sousSerie	KEYWORD2
+normalisation	KEYWORD2
+denormalisation	KEYWORD2
+codage	KEYWORD2
+decodage	KEYWORD2
+conversionb	KEYWORD2
+conversion	KEYWORD2
+codbin	KEYWORD2
+decbin	KEYWORD2
+intCont	KEYWORD2
+intLin	KEYWORD2
+regPol	KEYWORD2
+intPol	KEYWORD2
+intSpline	KEYWORD2
+lisSpline	KEYWORD2
+precisionCodage	KEYWORD2
+taillePayload	KEYWORD2
+tauxCompression	KEYWORD2
+check	KEYWORD2
+simul	KEYWORD2
+ecartTypeSimul	KEYWORD2
+compressEct	KEYWORD2
+compressYp	KEYWORD2
+compress	KEYWORD2
+decompressEct	KEYWORD2
+decompressYp	KEYWORD2
+decompressY0	KEYWORD2
+calcul	KEYWORD2
+param	KEYWORD2
