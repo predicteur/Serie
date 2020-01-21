@@ -1,10 +1,11 @@
-    //#include <SigFox.h>
 
+//#include <SigFox.h>
 //#include <ArduinoLowPower.h>
+#include <ESP8266WiFi.h>
+
 #include "Serie.h"
 #include "Compressor.h"
 #include "Compactor.h"
-#include <ESP8266WiFi.h>
 
 using namespace std;
 
@@ -13,28 +14,26 @@ void setup() {
   delay(10); Serial.println('\n');
 
   // données d'exemple  
-  Serial.println("données exemple : ");
+  Serial.println("données exemple : "+'\n');
   const int n = 16;
   const int p = 6;
   const int l = 2;
   float y0i[n] = { 2, 3.5, 5, 15, 20, 16, 18, 6, 8, 3.5, 5, 10, 12, 10, 12, 18 };
-  Serie sn; // pour appel des fonctions statiques
-  Serie y0 = Serie(n, "y0"); y0.setSerie(y0i, n); Serial.println(y0.pr());
-  Serie x0 = Serie(n, "x0", 1, 16); Serial.println(x0.pr());
-  Serie yt0 = y0.sousSerie(0, 6) | y0.sousSerie(9, 7); yt0.setNom("yt0"); Serial.println(yt0.pr());
-  Serie xt0 = x0.sousSerie(0, 6) | x0.sousSerie(9, 7); xt0.setNom("xt0"); Serial.println(xt0.pr());
-  Serie xtr0 = x0.sousSerie(6, 3); xtr0.setNom("xtr0"); Serial.println(xtr0.pr());
-  float xpi[p] = { 1, 4, 7, 10, 13, 16 };
-  Serie xp = Serie(p, "xp"); xp.setSerie(xpi, p); Serial.println(xp.pr());
-  float ypi[p] = { 1, 12, 20, 5, 10, 17 };
-  Serie yp = Serie(p, "yp"); yp.setSerie(ypi, p); Serial.println(yp.pr());
-  Serie xl = Serie(l, "xl"); xl[0] = 1; xl[1] = 16; Serial.println(xl.pr()+'\n');
+  Serie y0 = Serie(n, "y0"); y0.setSerie(y0i, n); 						                              Serial.println(y0.pr());
+  Serie x0 = Serie(n, "x0", 1, 16); 								                                        Serial.println(x0.pr());
+  Serie yt0 = y0.sousSerie(0, 6) | y0.sousSerie(9, 7); yt0.setNom("yt0"); 			            Serial.println(yt0.pr());
+  Serie xt0 = x0.sousSerie(0, 6) | x0.sousSerie(9, 7); xt0.setNom("xt0"); 			            Serial.println(xt0.pr());
+  Serie xtr0 = x0.sousSerie(6, 3); xtr0.setNom("xtr0"); 					                          Serial.println(xtr0.pr());
+  Serie xp = Serie(p, "xp"); float xpi[p] = { 1,  4, 7, 10, 13, 16 }; xp.setSerie(xpi, p); 	Serial.println(xp.pr());
+  Serie yp = Serie(p, "yp"); float ypi[p] = { 1, 12, 20, 5, 10, 17 }; yp.setSerie(ypi, p); 	Serial.println(yp.pr());
+  Serie xl = Serie(l, "xl"); xl[0] = 1; xl[1] = 16; 						                            Serial.println(xl.pr()+'\n');
   
   
   // exemple information 
   float moy = y0.moyenne();  // 10, 25
   float ect = y0.ecartType(); //  5.67
-  Serial.println("Exemple informations : moyenne : " + String(moy ) + " écart-type : " + String(ect));
+  Serial.println("Exemple informations : "+'\n');
+  Serial.println("moyenne : " + String(moy ) + " écart-type : " + String(ect)+'\n');
 
   // exemple création
   Serie x(16, "x", 0, 15); // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
@@ -55,7 +54,8 @@ void setup() {
   Serie y1 = y0.sousSerie(0, 6) | ytr0 | y0.sousSerie(9, 7); // y1 : [2, 3.5, 5, 15, 20, 16, 11.51, 7.0, 3.86, 3.5, 5, 10, 12, 10, 12, 18];
   Serie y2 = sn.intLin(xt0, yt0, x0); // yn : [2.0 3.5 5.0 15.0 20.0 16.0 12.9 9.8 6.6 3.5 5.0 10.0 12.0 10.0 12.0 18.0]
   Serie yx3 = y2.intLin(xt0, yt0, x0);
-  Serial.println("exemple complément de valeurs :" + ytr0.pr());
+  Serial.println("exemple complément de valeurs :" +'\n');
+  Serial.println(ytr0.pr());
   Serial.println(y1.pr());
   Serial.println(y2.pr());
   Serial.println(yx3.pr()+'\n');
@@ -69,7 +69,7 @@ void setup() {
   Serie yle = sn.intPol(xl, yl, x0); // yle : [7.91   8.22   8.54   8.85   9.16   9.47   9.78  10.09  10.41  10.72  11.03  11.34  11.65  11.96  12.28  12.59]
   float etl = sn.etDiff(y0, yle); // 2.999
   float ecl = sn.ecDiff(y0, yle); //2.520
-  Serial.println("exemple compression simple : ");
+  Serial.println("exemple compression simple : " +'\n');
   Serial.println("ecart compression : " + String(etr) + " " + String(ecr));
   Serial.println(yre.pr());
   Serial.println(yr.pr());
@@ -83,7 +83,8 @@ void setup() {
   float lamb = 5;
   Serie yp2 = sn.lisSpline(xp, yp, lamb); // yp2: [2.84  10.99  14.93   9.52  11.00  15.71]
   Serie y4 = sn.intSpline(xp, yp2, x0, 0, 0); // y4 : [2.84   5.66   8.40  10.99  13.28  14.78  14.93  13.48  11.29   9.52   9.07   9.73  11.00  12.50  14.08  15.71]
-  Serial.println("exemple interpolation : " + y1.pr());
+  Serial.println("exemple interpolation : " +'\n');
+  Serial.println(y1.pr());
   Serial.println(y2.pr());
   Serial.println(y3.pr());
   Serial.println(yp2.pr());
@@ -95,10 +96,12 @@ void setup() {
   Serie ypc = payl.decodage(p, bit).denormalisation(0, 25); // ypc : [1.56  10.94  20.31   4.69  10.94  17.19]
   float ecart1 = sn.etDiff(yp, ypc); // 0.653
   float ecart2 = sn.ecDiff(yp, ypc); // 0.563
-  Serial.println("exemple codage : " + payl.pr());
+  Serial.println("exemple codage : " +'\n');
+  Serial.println(payl.pr());
   Serial.println(ypc.pr());
-  Serial.println("ecart codage : " + String(ecart1) + " " + String(ecart2));
+  Serial.println("ecart codage : " + String(ecart1) + " " + String(ecart2) +'\n');
 
+  //-----------------------------------------------------------------------------------------------------------------
   // exemples compression (compactor, compressor)
 
   // parametres normalistion
@@ -130,7 +133,8 @@ void setup() {
     y2 = combo.simul();
     y21 = combo.decompressY0(combo.compress());
     float ectc2 = combo.ecartTypeSimul(false);*/
-    Serial.println("1 comp : bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); // bits :  3  taux : 0.012
+    Serial.println("compression 1 :" +'\n');
+    Serial.println(" bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); // bits :  3  taux : 0.012
     Serial.println("ectc1 : " + String(ectc1[0]) + String(comp.decompressEct(comp.compress())[0])); // ectc1 : 5.71 0.0
     Serial.println(y1.pr()); 
     Serial.println(y11.pr()+'\n'); 
@@ -145,7 +149,8 @@ void setup() {
     y1 = comp.simul(); // [7.81, 8.23, 8.65, 9.06, 9.48, 9.90, 10.31, 10.73, 11.15, 11.56, 11.98, 12.40, 12.81, 13.23, 13.64, 14.06]
     Serie ectc1 = comp.ecartTypeSimul(false); // 5.55
     // résultats identiques avec Compressor
-    Serial.println("2 comp : bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); //bits :  6  taux : 0.023
+    Serial.println("compression 2 :" +'\n');
+    Serial.println("bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); //bits :  6  taux : 0.023
     Serial.println("ectc1 : " + String(ectc1[0]) + String(comp.decompressEct(comp.compress())[0])); // ectc1 : 5.55 0.0
     Serial.println(y1.pr()+'\n');
   }
@@ -159,7 +164,8 @@ void setup() {
     y1 = comp.simul(); // [1.56   5.12  10.00  14.06  16.20  16.09  14.06  10.83   7.38   4.69   3.62   4.67   7.81  12.26  16.33  17.19]
     Serie ectc1 = comp.ecartTypeSimul(false); // 3.12
     // résultats identiques avec Compressor
-    Serial.println("3 comp : bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); //bits : 18  taux :  0.070
+    Serial.println("compression 3 : " +'\n');
+    Serial.println("bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); //bits : 18  taux :  0.070
     Serial.println("ectc1 : " + String(ectc1[0]) + String(comp.decompressEct(comp.compress())[0])); // ectc1 : 3.12 0.0
     Serial.println(y1.pr()+'\n');
   }
@@ -177,7 +183,8 @@ void setup() {
     Serie ectc2 = combo.ecartTypeSimul(false);
     float precision = combo.precisionCodage();
 
-    Serial.println("4 comp : bits : " + String(combo.taillePayload()) + " taux : " + String(combo.tauxCompression())); // bits :  48  taux : 0.188
+    Serial.println("compression 4 : " +'\n');
+    Serial.println("bits : " + String(combo.taillePayload()) + " taux : " + String(combo.tauxCompression())); // bits :  48  taux : 0.188
     Serial.println("ectc2, precision : " + String(ectc2[0]) + String(combo.decompressEct(combo.compress())[0]) + " " + String(precision)); // ectc2 : 0.89 0.0 3.57
     Serial.println(y2.pr());
     Serial.println(y21.pr());
@@ -198,7 +205,8 @@ void setup() {
     Serie ectc2 = combo.ecartTypeSimul(false);
     float precision = combo.precisionCodage();
 
-    Serial.println("5 comp : bits : " + String(combo.taillePayload()) + " taux : " + String(combo.tauxCompression())); // bits :  27  taux : 0.11
+    Serial.println("compression 5 : " +'\n');
+    Serial.println("bits : " + String(combo.taillePayload()) + " taux : " + String(combo.tauxCompression())); // bits :  27  taux : 0.11
     Serial.println("ectc2, precision : " + String(ectc2[0]) + String(combo.decompressEct(combo.compress())[0]) + " " + String(precision)); // ectc2 : 2.94 0.0 7.62
     Serial.println(y2.pr());
     Serial.println(y21.pr());

@@ -1,14 +1,18 @@
+/*
+Serie.cpp - Serie library v1.0.0 - 2020-01-21
+Copyright (C) 2019-2020 Philippe Thomy.  All rights reserved.
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+See file LICENSE.txt for further informations on licensing terms.
+*/
 #include "Serie.h"
 #include <MatrixMath.h>
-/*#include "stdafx.h"
-#include <String>
-#include <cmath>
-#include <algorithm>
-string et to_String -> String
-cout << endl -> Serial.println('\n')
-*/
 
 using namespace std;
+
+Serie sn;	// pre-instantiate
 
 Serie::Serie() {
 	LEN = 0;
@@ -318,7 +322,7 @@ Serie	Serie::intSpline(Serie xp, Serie yp, Serie xn, float prem, float der) {
 	}
 	int resOk = Matrix.Invert(r, p);
 	if (resOk == 0) return yn;
-	Matrix.Multiply(r, f, p, p, p, m);
+	Matrix.Multiply(r, f, p, p, 1, m);
 	for (int i = 0; i < p - 1; i++) {
 		c[i] = (yp[i + 1] - yp[i]) / h[i] - h[i] / 6.0 * (m[i + 1] - m[i]);
 		cp[i] = yp[i] - m[i] / 6.0 * pow(h[i], 2);
