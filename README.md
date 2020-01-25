@@ -60,7 +60,7 @@ The Serie object is composed of the following arguments :
 * **normalisation()**: Generation of a standardized series (values between -0.5 and +0.5)
 * **denormalisation()**: Generation of a denormalized series (inverse function of normalisation)
 
-## Implementation
+## Use
 See the examples given on the use of the Serie object.
 
 # Compactor / Compressor objects
@@ -112,30 +112,35 @@ The parameters (points + standard deviation) are coded on the number of bits def
 
 The result is a bit array (which can then be converted to variables of given length).
 
-## Principe de la compression avancée (classe : Compressor)
-Une deuxième méthode combinant deux niveaux de régression est implémentée. Elle permet notamment de s'affranchir des limites mini/maxi qui pénalisent le codage :
+## Principle of advanced compression (class: Compressor)
+A second method combining two regression levels is implemented. It allows in particular to get rid of the minimum / maximum limits which penalize the coding:
 
-1 - Réalisation d'une première régression sur la séquence fournie.
+1 - Realization of a first regression on the supplied sequence.
 
-2 - Réalisation d'une deuxième série de régressions sur des sous-séquences constituée des écarts entre les valeurs initiales et celles issues de la première régression. Les points de la deuxième régression sont codés dans l'enveloppe \[-2 * écart-type, 2 * écart-type\] ce qui permet de réduire le nombre de bits de codage nécessaire.
+2 - Realization of a second series of regressions on the sub-sequences made up of the differences between the initial values and those resulting from the first regression. The points of the second regression are coded in the envelope \[- 2 * type deviation, 2 * type deviation \] which makes it possible to reduce the number of coding bits necessary.
 
-*Exemple d'une séquence de 32 points* : On effectue une première régression avec un point (moyenne). Pour les 32 écarts à la moyenne, on effectue 4 régressions (polynomiales sur 3 points) sur les 4 sous-séquences de 8 points. On a donc représenté nos 32 points initiaux par 1 + 4 * 3 points. Le codage des 4 * 3 points peut se faire sur un nombre de bits faible (codage sur la plage de 4 écart-type), par exemple 3 ou 4 bits alors que le codage du point de moyenne ou de l'écart-type initial doit se faire en fonction de la plage mini-maxi définie.
+*Example of a sequence of 32 points*: We carry out a first regression with one point (average). For the 32 deviations from the average, perform 4 regressions (polynomials on 3 points) on the 4 sub-sequences of 8 points. On a therefore represented our 32 initial points by 1 + 4 * 3 points. The coding of the 4 * 3 points can be done on a low number of bits, for example 3 or 4 bits while the coding of the average point or the initial standard deviation must be done according to the minimum-maximum range defined.
 
-Cette compression avancée s'appuie sur la classe de compression simple.
-## Principe de mise en oeuvre de la décompression
-La décompression consiste à calculer les valeurs à partir des paramètres codés avec les étapes inverses à celles de la compression :
-### Etape 1 : Décodage des paramètres
-Reconstitution des valeurs réelles à partir de la valeur codée.
-### Etape 2 : Décompression
-Reconstitution des valeurs estimées à partir des paramètres du polynome.
-### Etape 3 : Dénormalisation
-Mise à l'échelle des estimations à partir des seuils mini/maxi définis
-### Etape 4 : Ecart-type
-Reconstitution de l'indicateur de compression (écart-type).
-## Algorithmes utilisés
-[voir compression de courbe](https://fr.wikipedia.org/wiki/Compression_de_courbe)
-## Utilisation
-Voir les exemples donnés sur les deux types de régressions.
+This advanced compression is based on the simple compression class (Compactor).
+
+## Principle of decompression implementation
+Decompression consists in calculating the values from the parameters coded with the opposite steps to those of compression:
+### Step 1: Decoding the parameters
+Reconstruction of actual values from the coded value.
+### Step 2: Decompression
+Reconstitution of the estimated values from the parameters of the polynomial.
+### Step 3: Denormalization
+Scaling of estimates based on defined minimum / maximum thresholds
+### Step 4: Standard deviation
+Reconstruction of the compression indicator (standard deviation).
+
+## Algorithms used
+[see curve compression](https://fr.wikipedia.org/wiki/Compression_de_courbe)
+
+## Use
+See the examples given on the two types of regressions.
+
+----
 
 
 
