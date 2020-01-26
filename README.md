@@ -48,10 +48,10 @@ The Serie object is composed of the following arguments :
 ## Transformation functions of a series
 ### Processing functions
 * **ecretage()**: New series with application of a minimum, maximum threshold for each value
-* **egPol()**: Generation of a reduced series by polynomial regression of the series
+* **regPol()**: Generation of a reduced series by polynomial regression of the series
 * **intPol()**: Generation of an extended series by polynomial interpolation of the series
 * **intLin()**: Generation of an extended series by linear interpolation of the series
-* **intCont()**: Generation of missing terms of a series by cubic interpolation of the series
+* **intCont()**: Generation of missing terms of a series by cubic polynomial interpolation of the series
 * **intSpline()**: Generation of an extended series by cubic spline of interpolation of the series
 * **lisSpline()**: Generation of a smoothed series by cubic spline of the series
 ### Conversion functions
@@ -59,6 +59,10 @@ The Serie object is composed of the following arguments :
 * **decodage()**: Transformation of a series of bits into a series of values by decoding each value of the series
 * **normalisation()**: Generation of a standardized series (values between -0.5 and +0.5)
 * **denormalisation()**: Generation of a denormalized series (inverse function of normalisation)
+* **conversion()**: Conversion of a value between a mini and a maxi in an integer between 0 and 2\*\*bits
+* **conversionb()**: Conversion of an integer between 0 and 2\*\*bits to a value between a mini and a maxi
+* **codbin()**: Conversion of an integer between 0 and 2\*\*bits in a Serie of values 0 or 1 (lenght : bits)
+* **decbin()**: Conversion of a Serie of values 0 or 1 in an integer
 
 ## Use
 See the examples given on the use of the Serie object.
@@ -86,15 +90,18 @@ The compression error (standard deviation between the initial values and the rec
 
 ## Implementation
 Two types of algorithms are implemented (class: Compactor and class: Compressor). They are based on the Serie object and have the following functions:
-* independent functions of a dataset:
+* functions independent of a dataset:
     * **check()**: check the input parameters
     * **taillePayload()**: number of bits of compressed data
-    * **precisionCodage()**: precision of the coding used
+    * **precisionCodage()**: precision of the coding used (maximal error)
+    * **tauxCompression()**: ratio between the number of bits after compression and the number of bits before compression (2 bytes per value)
 * functions linked to the dataset:
     * **calcul()**: generation of the main outputs
     * **simul()**: simulated values after compression / decompression (usable after calcul)
     * **ecartTypeSimul()**: standard deviation of simulated values / original values (usable after calcul)
     * **compress()**: compressed values (usable after calcul)
+    * **compressEct()**: compressed value of standard deviation (usable after calcul)
+    * **compressYp()**: compressed value whithout standard deviation (usable after calcul)
 * functions related to decompressing a dataset:
     * **decompressY0()**: values reconstituted by decompression
     * **decompressYp()**: parameter values from the regression (Compactor only)
@@ -197,7 +204,7 @@ L'affectation (opérateur = surchargé) est utilisée pour copier une série dan
 * **regPol()** : Génération d'une série réduite par régression polynomiale de la série
 * **intPol()** : Génération d'une série étendue par interpolation polynomiale de la série
 * **intLin()** : Génération d'une série étendue par interpolation linéaire de la série
-* **intCont()** : Génération de termes manquants d'une série par interpolation cubique de la série
+* **intCont()** : Génération de termes manquants d'une série par interpolation polynomiale cubique de la série
 * **intSpline()** : Génération d'une série étendue par spline cubique d'interpolation de la série
 * **lisSpline()** : Génération d'une série lissée par spline cubique de la série
 ### Fonctions de conversion
@@ -234,11 +241,14 @@ Deux types d'algorithmes sont mis en place (classe : Compactor et classe : Compr
     * **check()**               : vérification des paramètres d'entrée 
     * **taillePayload()**       : nombre de bits des données compressées
     * **precisionCodage()**     : précision du codage utilisé
+    * **tauxCompression()**     : ratio entre le nombre de bits après compression et le nombre de bit avant compression (2 octets par valeur)
 * fonctions liées au jeu de données : 
     * **calcul()**              : génération des principales sorties
     * **simul()**               : valeurs simulées après compression / décompression (utilisable après calcul)
     * **ecartTypeSimul()**      : écart-type des valeurs simulées / valeurs d'origine - fonction (utilisable après calcul)
     * **compress()**            : valeurs compressées (utilisable après calcul)
+    * **compressEct()**         : valeur de l'écart-type compressé (utilisable après calcul)
+    * **compressYp()**          : valeurs compressées hors écart-type (utilisable après calcul)
 * fonctions liées à la décompression d'un jeu de données :
     * **decompressY0()**        : valeurs reconstituées par la décompression
     * **decompressYp()**        : valeurs des paramètres issus de la régression (Compactor uniquement)
