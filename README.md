@@ -216,6 +216,10 @@ L'affectation (opérateur = surchargé) est utilisée pour copier une série dan
 * **decodage()** : Transformation d'une suite de bits en une série de valeurs par decodage de chaque valeur de la série
 * **normalisation()** : Génération d'une série normalisée (valeurs comprises entre -0,5 et +0,5) 
 * **denormalisation()** : Génération d'une série denormalisée (fonction inverse de la normalisation) 
+* **conversion()**: Conversion d'une valeur comprise entre mini et maxi en un entier compris entre 0 et 2\*\*bits
+* **conversionb()**: Conversion d'un entier compris entre 0 et 2\*\*bits en une valeur comprise entre mini et maxi
+* **codbin()**: Conversion d'un entier compris entre 0 et 2\*\*bits en une Serie de valeurs 0 or 1 (longueur : bits)
+* **decbin()**: Conversion d'une Serie de valeurs 0 or 1 en un entier
 
 ## Utilisation
 Voir les exemples donnés sur l'utilisation de l'objet Serie.
@@ -250,6 +254,7 @@ Deux types d'algorithmes sont mis en place (classe : Compactor et classe : Compr
     * **calcul()**              : génération des principales sorties
     * **simul()**               : valeurs simulées après compression / décompression (utilisable après calcul)
     * **ecartTypeSimul()**      : écart-type des valeurs simulées / valeurs d'origine - fonction (utilisable après calcul)
+    * **param()**               : valeurs des paramètres (utilisable après calcul) (Compactor uniquement)
     * **compress()**            : valeurs compressées (utilisable après calcul)
     * **compressEct()**         : valeur de l'écart-type compressé (utilisable après calcul)
     * **compressYp()**          : valeurs compressées hors écart-type (utilisable après calcul)
