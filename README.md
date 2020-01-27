@@ -91,7 +91,7 @@ The compression error (standard deviation between the initial values and the rec
 ## Implementation
 Two types of algorithms are implemented (class: Compactor and class: Compressor). They are based on the Serie object and have the following functions:
 * functions independent of a dataset:
-    * **check()**: check the input parameters
+    * **check()**: check the input constructor arguments
     * **taillePayload()**: number of bits of compressed data
     * **precisionCodage()**: precision of the coding used (maximal error)
     * **tauxCompression()**: ratio between the number of bits after compression and the number of bits before compression (2 bytes per value)
@@ -99,12 +99,13 @@ Two types of algorithms are implemented (class: Compactor and class: Compressor)
     * **calcul()**: generation of the main outputs
     * **simul()**: simulated values after compression / decompression (usable after calcul)
     * **ecartTypeSimul()**: standard deviation of simulated values / original values (usable after calcul)
+    * **param()**: getters for parameters (usable after calcul) (Compactor only)
     * **compress()**: compressed values (usable after calcul)
     * **compressEct()**: compressed value of standard deviation (usable after calcul)
     * **compressYp()**: compressed value whithout standard deviation (usable after calcul)
 * functions related to decompressing a dataset:
     * **decompressY0()**: values reconstituted by decompression
-    * **decompressYp()**: parameter values from the regression (Compactor only)
+    * **decompressYp()**: parameter values from the compression (Compactor only)
     * **decompressEcartType()**: standard deviation of simulated values / original values
 
 ## Principle of simple compression (class: Compactor)
@@ -148,8 +149,11 @@ Reconstruction of the compression indicator (standard deviation).
 See the examples given on the two types of regressions.
 
 ----
+----
+                                       version francaise
 
-
+----
+----
 
 # Présentation
 Ce repository regroupe un ensemble de fonctions de traitement de séries temporelles. Elles sont écrites en C++ pour être utilisées sur des équipements d'acquisition de données (ex. ESP / Arduino).
@@ -238,7 +242,7 @@ L'erreur de compression (écart-type entre les valeurs de départ et les valeurs
 ## Mise en oeuvre
 Deux types d'algorithmes sont mis en place (classe : Compactor et classe : Compressor). Ils s'appuient sur l'objet Serie et présentent les fonctions suivantes :
 * fonctions indépendantes d'un jeu de données : 
-    * **check()**               : vérification des paramètres d'entrée 
+    * **check()**               : vérification des paramètres du constructeur 
     * **taillePayload()**       : nombre de bits des données compressées
     * **precisionCodage()**     : précision du codage utilisé
     * **tauxCompression()**     : ratio entre le nombre de bits après compression et le nombre de bit avant compression (2 octets par valeur)
