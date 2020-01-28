@@ -1,3 +1,160 @@
+# Presentation
+This repository groups together a set of time series functions. They are written in C ++ to be used on data acquisition equipment (eg ESP / Arduino).
+
+Two types of objects are used:
+* Serie : object representing time series,
+* Compactor / Compressor : object representing the compression of a time series,
+
+# Object Serie
+Time series include a series of numerical values.
+
+## Principle of representation
+The Serie object is composed of the following arguments :
+* **Name :** Character string
+* **Length :** Number of values in the series (integer)
+* **List of values :** The successive numerical values of the series (dynamic array of real)
+
+## Creation and update functions
+* **constructor :** Several creation modes are possible
+    * Empty series
+    * Series of a given length with values at 0
+    * Series of a given length with the values initialized to a given value
+    * Series of a given length with the values initialized by distribution between a starting point and an ending point
+    * Series created by copying from another series
+* **operators :** The operators +, -, += and * are overloaded to combine the values of series of the same length. An additional operation (operator | overloaded) makes it possible to group two series. The assignment (operator = overloaded) is used to copy one series to another. The values of the series are directly accessible (operator []).
+
+* **update :** The functions are as follows:
+    * **sousSerie()**: Generation of a series consisting of an extract from a series
+    * **init()**: same as constructor
+    * **copie()**: same as copy constructor
+    * **setName()**: name setter
+    * **setSerie()**: setter of the list of values
+* **getters :** The functions are as follows:
+    * **len()**: number of values in the series
+    * **lenom()**: name of the series
+    * **serie()**: list of values in the series    
+
+## Functions for analyzing a series
+### Statistical values of a series
+* **moyenne()**: average value of the series
+* **ecartType()**: standard deviation of the series
+### Characterization of two series
+* **ecDiff()**: average value of the differences (absolute value) between the two series
+* **etDiff()**: square root of the mean of the squares of the differences between the two series
+### Other
+* **pr()**: display of the series
+* **autoCorrelation()**: coming soon
+
+## Transformation functions of a series
+### Processing functions
+* **ecretage()**: New series with application of a minimum, maximum threshold for each value
+* **regPol()**: Generation of a reduced series by polynomial regression of the series
+* **intPol()**: Generation of an extended series by polynomial interpolation of the series
+* **intLin()**: Generation of an extended series by linear interpolation of the series
+* **intCont()**: Generation of missing terms of a series by cubic polynomial interpolation of the series
+* **intSpline()**: Generation of an extended series by cubic spline of interpolation of the series
+* **lisSpline()**: Generation of a smoothed series by cubic spline of the series
+### Conversion functions
+* **codage()**: Transformation of the series into a series of bits by coding each value of the series
+* **decodage()**: Transformation of a series of bits into a series of values by decoding each value of the series
+* **normalisation()**: Generation of a standardized series (values between -0.5 and +0.5)
+* **denormalisation()**: Generation of a denormalized series (inverse function of normalisation)
+* **conversion()**: Conversion of a value between a mini and a maxi in an integer between 0 and 2\*\*bits
+* **conversionb()**: Conversion of an integer between 0 and 2\*\*bits to a value between a mini and a maxi
+* **codbin()**: Conversion of an integer between 0 and 2\*\*bits in a Serie of values 0 or 1 (lenght : bits)
+* **decbin()**: Conversion of a Serie of values 0 or 1 in an integer
+
+## Use
+See the examples given on the use of the Serie object.
+
+# Compactor / Compressor objects
+
+These two objects represent the compression of a time series (eg to minimize the volumes of data sent over an LPWAN network).
+
+## Compression goals
+1 - Replacement of a set of points coded on 16 bits (eg integer) or 32 bits (eg real) into a reduced set of points and coded on a reduced number of bits.
+
+Example: 16 real points (64 bytes) compressed into 12 bytes
+
+2 - Use of easily implementable algorithms on microcontrollers.
+
+Example: use of Sigfox (limitation to 140 messages per day and 12 bytes per message).
+-> with a measurement every 15 seconds, you can send the 32 values measured every 8 minutes on 12 bytes
+
+## Compression principles
+Compression is carried out by sending parameters allowing a sequence of several values to be reconstructed (sequence of 32 values in the example above).
+
+The parameters come from several estimations by polynomial regression and are then coded on a defined number of bits ([see curve compression](https://fr.wikipedia.org/wiki/Compression_de_courbe)).
+
+The compression error (standard deviation between the initial values and the reconstructed values) is also integrated into the compression.
+
+## Implementation
+Two types of algorithms are implemented (class: Compactor and class: Compressor). They are based on the Serie object and have the following functions:
+* functions independent of a dataset:
+    * **check()**: check the input constructor arguments
+    * **taillePayload()**: number of bits of compressed data
+    * **precisionCodage()**: precision of the coding used (maximal error)
+    * **tauxCompression()**: ratio between the number of bits after compression and the number of bits before compression (2 bytes per value)
+* functions linked to the dataset:
+    * **calcul()**: generation of the main outputs
+    * **simul()**: simulated values after compression / decompression (usable after calcul)
+    * **ecartTypeSimul()**: standard deviation of simulated values / original values (usable after calcul)
+    * **param()**: getters for parameters (usable after calcul) (Compactor only)
+    * **compress()**: compressed values (usable after calcul)
+    * **compressEct()**: compressed value of standard deviation (usable after calcul)
+    * **compressYp()**: compressed value whithout standard deviation (usable after calcul)
+* functions related to decompressing a dataset:
+    * **decompressY0()**: values reconstituted by decompression
+    * **decompressYp()**: parameter values from the compression (Compactor only)
+    * **decompressEcartType()**: standard deviation of simulated values / original values
+
+## Principle of simple compression (class: Compactor)
+### Step 1: Standardization
+Scaling of \[- 0.5 0.5 \] of the values of the sequence from the minimum, maximum thresholds.
+### Step 2: Regression
+Calculation of the p parameters of the polynomial representing the sequence.
+
+An additional parameter is calculated to represent the performance of the compression (including the deviations linked to the coding): the standard deviation between the initial points and the estimated points.
+### Step 3: Coding of parameters
+The parameters (points + standard deviation) are coded on the number of bits defined.
+
+The result is a bit array (which can then be converted to variables of given length).
+
+## Principle of advanced compression (class: Compressor)
+A second method combining two regression levels is implemented. It allows in particular to get rid of the minimum / maximum limits which penalize the coding:
+
+1 - Realization of a first regression on the supplied sequence.
+
+2 - Realization of a second series of regressions on the sub-sequences made up of the differences between the initial values and those resulting from the first regression. The points of the second regression are coded in the envelope \[- 2 * type deviation, 2 * type deviation \] which makes it possible to reduce the number of coding bits necessary.
+
+*Example of a sequence of 32 points*: We carry out a first regression with one point (average). For the 32 deviations from the average, perform 4 regressions (polynomials on 3 points) on the 4 sub-sequences of 8 points. On a therefore represented our 32 initial points by 1 + 4 * 3 points. The coding of the 4 * 3 points can be done on a low number of bits, for example 3 or 4 bits while the coding of the average point or the initial standard deviation must be done according to the minimum-maximum range defined.
+
+This advanced compression is based on the simple compression class (Compactor).
+
+## Principle of decompression implementation
+Decompression consists in calculating the values from the parameters coded with the opposite steps to those of compression:
+### Step 1: Decoding the parameters
+Reconstruction of actual values from the coded value.
+### Step 2: Decompression
+Reconstitution of the estimated values from the parameters of the polynomial.
+### Step 3: Denormalization
+Scaling of estimates based on defined minimum / maximum thresholds
+### Step 4: Standard deviation
+Reconstruction of the compression indicator (standard deviation).
+
+## Algorithms used
+[see curve compression](https://fr.wikipedia.org/wiki/Compression_de_courbe)
+
+## Use
+See the examples given on the two types of regressions.
+
+----
+----
+                                       version francaise
+
+----
+----
+
 # Présentation
 Ce repository regroupe un ensemble de fonctions de traitement de séries temporelles. Elles sont écrites en C++ pour être utilisées sur des équipements d'acquisition de données (ex. ESP / Arduino).
 
@@ -51,7 +208,7 @@ L'affectation (opérateur = surchargé) est utilisée pour copier une série dan
 * **regPol()** : Génération d'une série réduite par régression polynomiale de la série
 * **intPol()** : Génération d'une série étendue par interpolation polynomiale de la série
 * **intLin()** : Génération d'une série étendue par interpolation linéaire de la série
-* **intCont()** : Génération de termes manquants d'une série par interpolation cubique de la série
+* **intCont()** : Génération de termes manquants d'une série par interpolation polynomiale cubique de la série
 * **intSpline()** : Génération d'une série étendue par spline cubique d'interpolation de la série
 * **lisSpline()** : Génération d'une série lissée par spline cubique de la série
 ### Fonctions de conversion
@@ -59,6 +216,10 @@ L'affectation (opérateur = surchargé) est utilisée pour copier une série dan
 * **decodage()** : Transformation d'une suite de bits en une série de valeurs par decodage de chaque valeur de la série
 * **normalisation()** : Génération d'une série normalisée (valeurs comprises entre -0,5 et +0,5) 
 * **denormalisation()** : Génération d'une série denormalisée (fonction inverse de la normalisation) 
+* **conversion()**: Conversion d'une valeur comprise entre mini et maxi en un entier compris entre 0 et 2\*\*bits
+* **conversionb()**: Conversion d'un entier compris entre 0 et 2\*\*bits en une valeur comprise entre mini et maxi
+* **codbin()**: Conversion d'un entier compris entre 0 et 2\*\*bits en une Serie de valeurs 0 or 1 (longueur : bits)
+* **decbin()**: Conversion d'une Serie de valeurs 0 or 1 en un entier
 
 ## Utilisation
 Voir les exemples donnés sur l'utilisation de l'objet Serie.
@@ -85,14 +246,18 @@ L'erreur de compression (écart-type entre les valeurs de départ et les valeurs
 ## Mise en oeuvre
 Deux types d'algorithmes sont mis en place (classe : Compactor et classe : Compressor). Ils s'appuient sur l'objet Serie et présentent les fonctions suivantes :
 * fonctions indépendantes d'un jeu de données : 
-    * **check()**               : vérification des paramètres d'entrée 
+    * **check()**               : vérification des paramètres du constructeur 
     * **taillePayload()**       : nombre de bits des données compressées
     * **precisionCodage()**     : précision du codage utilisé
+    * **tauxCompression()**     : ratio entre le nombre de bits après compression et le nombre de bit avant compression (2 octets par valeur)
 * fonctions liées au jeu de données : 
     * **calcul()**              : génération des principales sorties
     * **simul()**               : valeurs simulées après compression / décompression (utilisable après calcul)
     * **ecartTypeSimul()**      : écart-type des valeurs simulées / valeurs d'origine - fonction (utilisable après calcul)
+    * **param()**               : valeurs des paramètres (utilisable après calcul) (Compactor uniquement)
     * **compress()**            : valeurs compressées (utilisable après calcul)
+    * **compressEct()**         : valeur de l'écart-type compressé (utilisable après calcul)
+    * **compressYp()**          : valeurs compressées hors écart-type (utilisable après calcul)
 * fonctions liées à la décompression d'un jeu de données :
     * **decompressY0()**        : valeurs reconstituées par la décompression
     * **decompressYp()**        : valeurs des paramètres issus de la régression (Compactor uniquement)
