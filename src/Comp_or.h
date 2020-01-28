@@ -12,28 +12,23 @@ See file LICENSE.txt for further informations on licensing terms.
 #define COMP_OR
 #include "Serie.h"
 
-/*#include <iostream>
-#pragma once
-#include <algorithm>
-#include <string>*/
-
 class Comp_or {
 protected:
-	// parametres normalistion
-	float	MINI;					//plage mini et maxi des mesures prise en compte(écrétage sinon)
-	float	MAXI;					//plage mini et maxi des mesures prise en compte(écrétage sinon)
-	// paramètres internes
-	int		BITS;
-	int		BITECT;					// nb de bits pour l'écart-type ex. 8
-	int		BITYP;					// nb de bits pour l'écart-type ex. 8
-	int		CODAGEECT;				// prise encompte de l'écart-type dans le codage (0: non, 1: oui)
-	Serie	y0;						// valeurs à compresser
-	Serie	yr0;					// résultat non normalisé
-	bool	calculKo;
-	// paramètres codage
-	Serie	paylEct;
-	Serie	paylYp;
-	float	precCod;
+	// normalization data
+	float	MINI;					//minimum, maximum thresholds
+	float	MAXI;					//minimum, maximum thresholds
+	// internal parameters
+	int		BITS;					// total bits number
+	int		BITECT;					// standard deviation bits number eg 8
+	int		BITYP;					// parameters bits number eg 8
+	int		CODAGEECT;				// standard deviation coding (0: no, 1: yes)
+	Serie	y0;						// values to compress
+	Serie	yr0;					// values after compress/decompress cycle
+	bool	calculKo;				// result of calcul function
+	// coding parameters
+	Serie	paylEct;				// standard deviation compressed
+	Serie	paylYp;					// parameters compressed
+	float	precCod;				// precision of the coding
 public:
 	Comp_or(float mini, float maxi, int bits, int bitEct, int bitYp, int codageEct);
 	~Comp_or();

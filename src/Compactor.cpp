@@ -11,30 +11,50 @@ See file LICENSE.txt for further informations on licensing terms.
 
 using namespace std;
 
+//******************************************************************************
+//* Constructors - destructor
+//******************************************************************************
+
+/* Compactor
+@arg nbreg0 : number of parameters 
+@arg mini, maxi : threshold for each value
+@arg bit : number of bits for parameters coding
+@arg bitect : number of bits for standard deviation coding
+@arg codageEct : standard deviation coding (yes : 1, no : 0) */
 Compactor::Compactor(const int nbreg0, const float mini, const float maxi, const int bit, const int bitEct, const int codageEct) : Comp_or(mini, maxi, bitEct, bitEct, bitEct, codageEct) {
 	NBREG0	= nbreg0;
 	BIT		= bit;
 	BITS	= nbreg0 * bit + codageEct * bitEct;
 	BITYP	= nbreg0 * bit;
 	paylYp	= Serie(BITYP, "paylYp");
-	yp0		= Serie(nbreg0, "yp0");					// paramètres non normalisé
+	yp0		= Serie(nbreg0, "yp0");
 }
 Compactor::~Compactor() {}
 
+//******************************************************************************
+//* Class Functions
+//******************************************************************************
+
+//-----------------------------------------------------------------------------------------------------------------------------
+/* check the input constructor arguments */
 String Compactor::check(){
 	String resultat = Comp_or::check();
 	if (NBREG0 > y0.len())	resultat = "nombre de points de la compression supérieur à celui de l'échantillon";
-	if (NBREG0 < 1)				resultat = "nombre de points doit être supérieur à 1";
-	if (BIT < 1)				resultat = "nombre de bits insuffisant";
+	if (NBREG0 < 1)			resultat = "nombre de points doit être supérieur à 1";
+	if (BIT < 1)			resultat = "nombre de bits insuffisant";
 	return resultat;
 }
+//-----------------------------------------------------------------------------------------------------------------------------
+/* generation of the main outputs 
+@arg y : Serie to compress
+@arg codec : coding integration for parameters calculation (yes : true, no : false) */
 String Compactor::calcul(Serie y, bool codec){
 	y0 = y;
 	if (check() != "ok")  return check();
 	int p = NBREG0;
 	yp0 = Serie(NBREG0, "yp0");
 	precCod = float((MAXI - MINI) / (pow(2, BIT) - 1));
-	Serie xn(y0.len(), "xn", 0.0f, y0.len() - 1), xp(p, "xp");
+	Serie xn(y0.len(), "xn", 0.0f, y0.len() - 1.0f), xp(p, "xp");
 	if (p > 1) for (int i = 0; i < p; i++) xp[i] = float((y0.len() - 1) * i / (p - 1));
 	Serie yp = Serie::regPol(xn, y0.normalisation(MINI, MAXI), xp);
 	if (codec) for (int i = 0; i < NBREG0; i++) yp0[i] = Serie::conversionb(Serie::conversion(yp[i], -0.5, 0.5, BIT), -0.5, 0.5, BIT);
@@ -46,17 +66,25 @@ String Compactor::calcul(Serie y, bool codec){
 	paylEct = ecartTypeSimul(true).normalisation(MINI, MAXI).codage(1, BITECT);
 	return "ok";
 }
+//-----------------------------------------------------------------------------------------------------------------------------
+/* getters for parameters */
 Serie Compactor::param(){
 	Serie yp;
 	if (calculKo) return yp;
 	return yp0.denormalisation(MINI, MAXI);
 }
-// fonctions à utiliser uniquement en mode récepteur
-
-Serie Compactor::decompressYp(Serie payload){ return payload.sousSerie(0, BITS - CODAGEECT * BITECT).decodage(NBREG0, BIT); }
-
+//-----------------------------------------------------------------------------------------------------------------------------
+/* parameter values from the regression (same result as parm)
+@arg payload : Serie of binary values (compression) */
+Serie Compactor::decompressYp(Serie payload){ 
+	return payload.sousSerie(0, BITS - CODAGEECT * BITECT).decodage(NBREG0, BIT); }
+//-----------------------------------------------------------------------------------------------------------------------------
+/* values reconstituted by decompression
+@arg payload : Serie of binary values (compression) 
+@arg taille : number of values to decompress (Serie lenght)
+@result : Serie with decompressed values */
 Serie Compactor::decompressY0(Serie payload, int taille){
-	Serie xn(taille, "xn", 0, taille - 1);
+	Serie xn(taille, "xn", 0, taille - 1.0f);
 	Serie xp(NBREG0, "xp", 1.0f);
 	if (NBREG0 > 1) {
 		float *xpSerie = new float[NBREG0];

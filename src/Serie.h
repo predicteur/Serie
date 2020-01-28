@@ -13,10 +13,11 @@ See file LICENSE.txt for further informations on licensing terms.
 
 class Serie {
 protected:
-	int		LEN;				// taille de la série
-	String	NOM;				// nom de la série
-	float*	SERIE;				// liste des points
+	int		LEN;				// lenght of the series
+	String	NOM;				// name of the series
+	float*	SERIE;				// set of values
 public:
+	// constructor - destructor
 	Serie(const int len, String nom, float deb, float fin);
 	Serie(const int len, String nom, float deb);
 	Serie(const int len, String nom);
@@ -25,6 +26,7 @@ public:
 	Serie();
 	~Serie();
 	
+	// operator overloaded
 	Serie&	operator=(const Serie & serie);
 	friend	Serie operator+(const Serie & serie1, const Serie & serie2);
 	friend	Serie operator-(const Serie & serie1, const Serie & serie2);
@@ -36,12 +38,14 @@ public:
 	float&	operator[](int i);
 	float	operator[](int i) const;
 	
+	// setters - getters
 	void	setNom(String nom);
 	void	setSerie(float* serie, int len);
 	String  lenom();
 	int		len();
 	float*  serie();
 
+	// analysing and transformation functions
 	void	init(float dep, float fin);
 	String pr();
 	Serie	copie();
@@ -58,8 +62,8 @@ public:
 
 	static float	etDiff(Serie x, Serie y);
 	static float	ecDiff(Serie x, Serie y);
-	static float	conversionb(int valeurb, float mini, float maxi, int bits);
-	static int		conversion(float valeur, float mini, float maxi, int bits);
+	static float	conversionb(long valeurb, float mini, float maxi, int bits);
+	static long		conversion(float valeur, float mini, float maxi, int bits);
 	static Serie	codbin(long param, int lon);
 	static long		decbin(Serie payl, int lon);
 	static Serie	intCont(float x0, float y0, float yp0, float x1, float y1, float yp1, Serie xi);

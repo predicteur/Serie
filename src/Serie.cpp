@@ -14,6 +14,9 @@ using namespace std;
 
 Serie sn;	// pre-instantiate
 
+//******************************************************************************
+//* Constructors - destructor
+//******************************************************************************
 Serie::Serie() {
 	LEN = 0;
 	NOM = "vide";
@@ -53,141 +56,192 @@ Serie & Serie::operator=(const Serie & z) {
 	for (int i = 0; i<LEN; i++) SERIE[i] = z.SERIE[i];
 	return *this;
 }
-Serie operator+(const Serie & serie1, const Serie & serie2) {
+//******************************************************************************
+//* Operators
+//******************************************************************************
+Serie	operator+(const Serie & serie1, const Serie & serie2) {
 	Serie res(min(serie1.LEN, serie2.LEN), serie1.NOM + " + " + serie2.NOM);
 	for (int i = 0; i < res.LEN; i++) res.SERIE[i] = serie1.SERIE[i] + serie2.SERIE[i];
 	return res;
 }
-Serie operator|(const Serie & serie1, const Serie & serie2) {
+Serie	operator|(const Serie & serie1, const Serie & serie2) {
 	Serie sserie(serie1.LEN + serie2.LEN, serie1.NOM + " | " + serie2.NOM);
 	for (int i = 0; i < serie1.LEN; i++) sserie[i] = serie1[i];
 	for (int i = 0; i < serie2.LEN; i++) sserie[i + serie1.LEN] = serie2[i];
 	return sserie;
 }
-Serie operator-(const Serie & serie1, const Serie & serie2) {
+Serie	operator-(const Serie & serie1, const Serie & serie2) {
 	Serie res(min(serie1.LEN, serie2.LEN), serie1.NOM + " - " + serie2.NOM);
 	for (int i = 0; i < res.LEN; i++) res.SERIE[i] = serie1.SERIE[i] - serie2.SERIE[i];
 	return res;
 }
-Serie operator*(const Serie & serie1, const Serie & serie2) {
+Serie	operator*(const Serie & serie1, const Serie & serie2) {
 	Serie res(min(serie1.LEN, serie2.LEN), serie1.NOM + " * " + serie2.NOM);
 	for (int i = 0; i < res.LEN; i++) res.SERIE[i] = serie1.SERIE[i] * serie2.SERIE[i];
 	return res;
 }
-Serie operator*(float coef, const Serie & serie) {
+Serie	operator*(float coef, const Serie & serie) {
 	Serie res(serie.LEN, "c * " + serie.NOM);
 	for (int i = 0; i < res.LEN; i++) res.SERIE[i] = coef * serie.SERIE[i];
 	return res;
 }
-void operator+=(Serie & serie1, const Serie & serie2) { serie1 = serie1 + serie2; }
-void operator|=(Serie & serie1, const Serie & serie2) { serie1 = serie1 | serie2; }
-float& Serie::operator[](int i) { return SERIE[i]; }
-float  Serie::operator[](int i) const { return SERIE[i]; }
+void	operator+=(Serie & serie1, const Serie & serie2) { serie1 = serie1 + serie2; }
+void	operator|=(Serie & serie1, const Serie & serie2) { serie1 = serie1 | serie2; }
+float&	Serie::operator[](int i) { return SERIE[i]; }
+float	Serie::operator[](int i) const { return SERIE[i]; }
+
+//******************************************************************************
+//* Class Functions
+//******************************************************************************
+
 //-----------------------------------------------------------------------------------------------------------------------------
-void Serie::init(float dep, float fin) {
+/* Initialize Serie (like constructor)
+*/
+void	Serie::init(float dep, float fin) {
 	if (LEN > 0) for (int i = 0; i < LEN; i++) SERIE[i] = dep + i * (fin - dep) / float(LEN - 1);
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-String Serie::pr() {
+/* Print Serie : generate a string with name and values
+*/
+String	Serie::pr() {
 	String valeur = NOM + " :[ ";
 	for (int i = 0; i < LEN; i++) valeur += String(SERIE[i]) + String(", ");
 	valeur += "] ";
 	return valeur;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-void  Serie::setNom(String nom) { NOM = nom; }
+/* getters - setters
+*/
+void	Serie::setNom(String nom) { NOM = nom; }
 String  Serie::lenom() { return NOM; }
-int  Serie::len() { return LEN; }
-float* Serie::serie() { return SERIE; }
-//-----------------------------------------------------------------------------------------------------------------------------
-void Serie::setSerie(float* serie, int len) {
+int		Serie::len() { return LEN; }
+float*	Serie::serie() { return SERIE; }
+void	Serie::setSerie(float* serie, int len) {
 	LEN = len;
 	delete SERIE;
 	SERIE = new float[LEN];
 	for (int i = 0; i < LEN; i++) SERIE[i] = serie[i];
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-Serie  Serie::copie() {
+/* duplication of a Serie (like constructor)
+*/
+Serie	Serie::copie() {
 	Serie z(LEN, NOM);
 	for (int i = 0; i<LEN; i++) z.SERIE[i] = SERIE[i];
 	return z;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-float Serie::ecDiff(Serie y) {
+/* average value of the differences (absolute value) between the two series
+*/
+float	Serie::ecDiff(Serie y) {
 	float ecart = 0;
 	for (int i = 0; i<LEN; i++) ecart += fabs(SERIE[i] - y[i]) / float(LEN);
 	return ecart;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-float Serie::etDiff(Serie y) {
+/* square root of the mean of the squares of the differences between the two series (standard deviation)
+*/
+float	Serie::etDiff(Serie y) {
 	float ecart = 0;
 	for (int i = 0; i<LEN; i++) ecart += pow(SERIE[i] - y[i], 2) / float(LEN);
 	return float(sqrt(ecart));
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-float Serie::moyenne() {
+/* average value of the series
+*/
+float	Serie::moyenne() {
 	if (LEN < 1) return -1.0;
 	float moyenne = 0;
 	for (int i = 0; i<LEN; i++) moyenne += SERIE[i] / LEN;
 	return moyenne;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-float Serie::ecartType() {
+/* standard deviation of the series
+*/
+float	Serie::ecartType() {
 	if (LEN < 1) return -1.0;
 	Serie moyen(LEN, "", moyenne());
 	return etDiff(moyen);
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-Serie Serie::ecretage(float mini, float maxi) {
+/* New series with application of a minimum, maximum threshold for each value
+*/
+Serie	Serie::ecretage(float mini, float maxi) {
 	Serie serie(LEN, NOM);
 	for (int i = 0; i<LEN; i++) serie[i] = min(maxi, max(mini, SERIE[i]));
 	return serie;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-Serie Serie::sousSerie(int indice, int len2) {
+/* Generation of a series consisting of an extract from a series
+*/
+Serie	Serie::sousSerie(int indice, int len2) {
 	Serie sous(len2, "ss-" + NOM);
 	for (int i = 0; i<len2; i++) sous[i] = SERIE[indice + i];
 	return sous;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-Serie Serie::normalisation(float mini, float maxi) {
+/* Generation of a standardized series (values between -0.5 and +0.5) : -0.5 -> mini, +0.5 -> maxi
+*/
+Serie	Serie::normalisation(float mini, float maxi) {
 	Serie serie(LEN, NOM + "(n)");
 	for (int i = 0; i < LEN; i++) serie[i] = ((min(maxi, max(mini, SERIE[i]))) - mini) / (maxi - mini) - 0.5f;
 	return serie;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-Serie Serie::denormalisation(float mini, float maxi) {
+/* Generation of a denormalized series (inverse function of normalisation)
+*/
+Serie	Serie::denormalisation(float mini, float maxi) {
 	Serie serie(LEN, NOM + "(d)");
 	for (int i = 0; i < LEN; i++)  serie[i] = min(maxi, max(mini, (mini + (maxi - mini)*(SERIE[i] + 0.5f))));
 	return serie;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-Serie Serie::codage(int nbreg0, int bit) {
+/* Transformation of the series into a series of bits by coding each value of the series 
+@ arg : nbreg0 : number of values, bit : number of bit for each value
+*/
+Serie	Serie::codage(int nbreg0, int bit) {
 	Serie payl;
-	for (int i = 0; i < nbreg0; i++) payl |= codbin((long)conversion(SERIE[i], -0.5f, 0.5f, bit), bit);
+	for (int i = 0; i < nbreg0; i++) payl |= codbin(conversion(SERIE[i], -0.5f, 0.5f, bit), bit);
 	payl.NOM = "payl";
 	return payl;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-Serie Serie::decodage(int nbreg0, int bit) {
+/* Transformation of a series of bits into a series of values by decoding each value of the series
+@arg nbreg0 : number of values
+@arg bit : number of bit for each value
+*/
+Serie	Serie::decodage(int nbreg0, int bit) {
 	Serie yp0(nbreg0, "yp0");
 	for (int i = 0; i < nbreg0; i++) yp0[i] = conversionb(decbin(this->sousSerie(i * bit, bit), bit), -0.5, 0.5, bit);
 	return yp0;
 }
+
+//******************************************************************************
+//* Static Functions
+//******************************************************************************
+
 //-----------------------------------------------------------------------------------------------------------------------------
-float Serie::etDiff(Serie serie1, Serie serie2) { return serie1.etDiff(serie2); }
-float Serie::ecDiff(Serie serie1, Serie serie2) { return serie1.ecDiff(serie2); }
+/* eg class functions 
+*/
+float	Serie::etDiff(Serie serie1, Serie serie2) { return serie1.etDiff(serie2); }
+float	Serie::ecDiff(Serie serie1, Serie serie2) { return serie1.ecDiff(serie2); }
 //-----------------------------------------------------------------------------------------------------------------------------
-int Serie::conversion(float valeur, float mini, float maxi, int bits) {
+/* conversion of a value(valeur) between mini and maxi in an integer between 0 and 2**bits 
+*/
+long		Serie::conversion(float valeur, float mini, float maxi, int bits) {
 	int val = int(floor(pow(2, bits) * (valeur - mini) / (maxi - mini)));
 	return max(0, min(int(pow(2, bits) - 1), val));
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-float Serie::conversionb(int valeurb, float mini, float maxi, int bits) {
+/* conversion of an integer(valeurb) between 0 and 2**bits to a value between mini and maxi
+*/
+float	Serie::conversionb(long valeurb, float mini, float maxi, int bits) {
 	return float(mini + (maxi - mini) * (float(valeurb) + 0.5) / pow(2, bits));
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-Serie Serie::codbin(long param, int lon) {
+/* conversion of an integer (param) between 0 and 2**lon in a Serie of values 0 or 1
+*/
+Serie	Serie::codbin(long param, int lon) {
 	//for (int i = 0; i<lon; i++) payl[rang + i] = bitRead(param, i);
 	Serie payl(lon, "payl");
 	for (int i = 0; i < lon; i++) {
@@ -197,14 +251,22 @@ Serie Serie::codbin(long param, int lon) {
 	return payl;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-long Serie::decbin(Serie payl, int lon) {
+/* conversion of a Serie of values 0 or 1 in an integer between 0 and 2**lon
+*/
+long	Serie::decbin(Serie payl, int lon) {
 	long param = 0;
 	//for (int i = 0; i<lon; i++) bitWrite(param, i, payl[rang + i]);
 	for (int i = 0; i < lon; i++) param += (long)(payl[i] * pow(2, i));
 	return param;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-Serie Serie::intCont(float x0, float y0, float yp0, float x1, float y1, float yp1, Serie xi) {
+/* Generation of missing terms of a series by cubic polynomial interpolation of the series
+@arg x0, y0, yp0 : first point of the interpolation (value and derivative (slope of the tangent))
+@arg x1, y1, yp1 : first point of the interpolation (value and derivative (slope of the tangent))
+@arg xi : x-coordinate of the point to be define
+@result : y-coordinate of the point to be define
+*/
+Serie	Serie::intCont(float x0, float y0, float yp0, float x1, float y1, float yp1, Serie xi) {
 	int ni = xi.len();
 	double* Y01 = new double[4], *matP = new double[4], *Xi = new double[ni * 4];
 	double* Yi = new double[ni * 4], *Mat = new double[4 * 4];
@@ -232,7 +294,12 @@ Serie Serie::intCont(float x0, float y0, float yp0, float x1, float y1, float yp
 	return yi;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-Serie Serie::intLin(Serie xp, Serie yp, Serie xn) {
+/* Generation of an extended series by linear interpolation of the series
+@arg xp, yp : coordinate of the points
+@arg xn : x-coordinate of the point to be define
+@result : y-coordinate of the point to be define
+*/
+Serie	Serie::intLin(Serie xp, Serie yp, Serie xn) {
 	int n = xn.len(), p = xp.len();
 	Serie yn(n, "yn");
 	if (p == 1) for (int i = 0; i < n; i++) yn[i] = yp[0];
@@ -252,7 +319,12 @@ Serie Serie::intLin(Serie xp, Serie yp, Serie xn) {
 	return yn;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
-Serie Serie::regPol(Serie xn, Serie yn, Serie xp) {
+/* Generation of a reduced series by polynomial regression of the series
+@arg xn, yn : coordinate of the points
+@arg xp : x-coordinate of the point to be define
+@result : y-coordinate of the point to be define
+*/
+Serie	Serie::regPol(Serie xn, Serie yn, Serie xp) {
 	int n = xn.len(), p = xp.len();
 	double* s = new double[2 * p], *matXp = new double[p*p], *matS = new double[p*p];
 	double* matP = new double[p*p], *matT = new double[p], *matY = new double[p];
@@ -278,6 +350,11 @@ Serie Serie::regPol(Serie xn, Serie yn, Serie xp) {
 	return yp;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
+/* Generation of an extended series by polynomial interpolation of the series
+@arg xp, yp : coordinate of the points
+@arg xn : x-coordinate of the point to be define
+@result : y-coordinate of the point to be define
+*/
 Serie	Serie::intPol(Serie xp, Serie yp, Serie xn) {
 	int n = xn.len(), p = xp.len();
 	double* Xn = new double[n*p], *Xp = new double[p*p], *matP = new double[p];
@@ -303,6 +380,12 @@ Serie	Serie::intPol(Serie xp, Serie yp, Serie xn) {
 	return yn;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
+/* Generation of an extended series by cubic spline of interpolation of the series
+@arg xp, yp : coordinate of the points
+@arg xn : x-coordinate of the point to be define
+@arg prem, der : second derivative at the beginning and the end of the spline (default : 0) -> see french wikipedia Spline
+@result : y-coordinate of the point to be define
+*/
 Serie	Serie::intSpline(Serie xp, Serie yp, Serie xn, float prem, float der) {
 	int n = xn.len(), p = xp.len();
 	double* h = new double[p - 1], *f = new double[p], *r = new double[p*p], *m = new double[p*p];
@@ -341,6 +424,11 @@ Serie	Serie::intSpline(Serie xp, Serie yp, Serie xn, float prem, float der) {
 	return yn;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
+/* Generation of a smoothed series by cubic spline of the series
+@arg xp, yp : coordinate of the points
+@arg lamb : smoothing coefficient (0 : return the same points, infinite : return a regression line)
+@result : y-coordinate of the smoothing points
+*/
 Serie	Serie::lisSpline(Serie xp, Serie yp, float lamb) {
 	String valeur;
 	int p = xp.len();

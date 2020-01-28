@@ -12,13 +12,24 @@ See file LICENSE.txt for further informations on licensing terms.
 
 using namespace std;
 
+//******************************************************************************
+//* Constructors - destructor
+//******************************************************************************
+
+/* Compressor
+@arg nbreg : number of secondary regressions (multiple of the number of values to compress)
+@arg nbreg0 : number of parameters for the first regression
+@arg nbreg1 : number of parameters for the second series of regressions
+@arg mini, maxi : threshold for each value
+@arg bit0 : number of bits for parameters coding (first regression)
+@arg bit1 : number of bits for parameters coding (second series of regressions)
+@arg bitect : number of bits for standard deviation coding
+@arg codageEct : standard deviation coding (yes : 1, no : 0) */
 Compressor::Compressor(const int nbreg, const int nbreg0, const int nbreg1, const float mini, const float maxi,
 					   const int bit0, const int bit1, const int bitEct, const int codageEct) : Comp_or(mini, maxi, bitEct, bitEct, bitEct, codageEct) {
-	// parametres compression
 	NBREG  = nbreg;
 	NBREG0 = nbreg0;
 	NBREG1 = nbreg1;
-	// parametres codage
 	bBIT0   = bit0;
 	bBIT1   = bit1;
 	if (nbreg0 < 1) {
@@ -37,7 +48,13 @@ Compressor::Compressor(const int nbreg, const int nbreg0, const int nbreg1, cons
 	paylYp = Serie(BITYP, "paylYp");
 }
 Compressor::~Compressor(){}
+
+//******************************************************************************
+//* Class Functions
+//******************************************************************************
+
 //-----------------------------------------------------------------------------------------------------------------------------
+/* check the input constructor arguments */
 String Compressor::check(){
 	String resultat = Comp_or::check();
 	if (NBREG0 > y0.len())							resultat = "nombre de points de la compression supérieur à celui de l'échantillon";
@@ -45,6 +62,10 @@ String Compressor::check(){
 	if (bBIT0 < 1 or bBIT1 < 1)						resultat = "nombre de bits insuffisant";
 	return resultat;
 }
+//-----------------------------------------------------------------------------------------------------------------------------
+/* generation of the main outputs
+@arg y : Serie to compress
+@arg codec : coding integration for parameters calculation (yes : true, no : false) */
 String Compressor::calcul(Serie y, bool codec) {
 	int indPay  = 0;
 	Serie y0fo(y.len()), y1fo;
@@ -53,7 +74,7 @@ String Compressor::calcul(Serie y, bool codec) {
 	paylYp = Serie();
 	if (check() != "ok")  return check();
 
-	// compression initiale
+	// first compression
 	if (NBREG0 > 0) {
 		Compactor comp0(NBREG0, MINI, MAXI, bBIT0, BITECT, CODAGEECT0);
 		String res = comp0.calcul(y0, codec);
@@ -68,7 +89,7 @@ String Compressor::calcul(Serie y, bool codec) {
 		maxi1 =  2.0f * ect0[0];
 		indPay = NBREG0 * bBIT0 + BITECT * CODAGEECT0;
 	}
-	// compression complémentaire
+	// second compression
 	Serie y1 = y0 - y0fo; 
 	if (NBREG > 0) {
 		Compactor comp1(NBREG1, mini1, maxi1, bBIT1, BITECT, CODAGEECT);
@@ -81,7 +102,6 @@ String Compressor::calcul(Serie y, bool codec) {
 		indPay += NBREG1 * bBIT1 * NBREG;
 		precCod = comp1.precisionCodage();
 	}
-	// donnees de sortie
 	if (NBREG > 0) yr0 = (y0fo + y1fo).ecretage(MINI, MAXI);
 	else yr0 = y0fo;
 	yr0.setNom("yr0");
@@ -90,7 +110,11 @@ String Compressor::calcul(Serie y, bool codec) {
 	return "ok";
 }
 
-// fonctions à utiliser uniquement en mode récepteur
+//-----------------------------------------------------------------------------------------------------------------------------
+/* values reconstituted by decompression
+@arg payload : Serie of binary values (compression)
+@arg taille : number of values to decompress (Serie lenght)
+@result : Serie with decompressed values */
 Serie Compressor::decompressY0(Serie payl, int taille) {
 	int indYp1 = 0;
 	Serie yr1, yr, yr0(taille);
