@@ -70,6 +70,12 @@ Serie	operator|(const Serie & serie1, const Serie & serie2) {
 	for (int i = 0; i < serie2.LEN; i++) sserie[i + serie1.LEN] = serie2[i];
 	return sserie;
 }
+Serie operator|(const Serie & serie1, float valeur) {
+	Serie sserie(serie1.LEN + 1, serie1.NOM);
+	for (int i = 0; i < serie1.LEN; i++) sserie[i] = serie1[i];
+	sserie[serie1.LEN] = valeur;
+	return sserie;
+}
 Serie	operator-(const Serie & serie1, const Serie & serie2) {
 	Serie res(min(serie1.LEN, serie2.LEN), serie1.NOM + " - " + serie2.NOM);
 	for (int i = 0; i < res.LEN; i++) res.SERIE[i] = serie1.SERIE[i] - serie2.SERIE[i];
@@ -87,6 +93,7 @@ Serie	operator*(float coef, const Serie & serie) {
 }
 void	operator+=(Serie & serie1, const Serie & serie2) { serie1 = serie1 + serie2; }
 void	operator|=(Serie & serie1, const Serie & serie2) { serie1 = serie1 | serie2; }
+void 	operator|=(Serie & serie1, float valeur) { serie1 = serie1 | valeur; }
 float&	Serie::operator[](int i) { return SERIE[i]; }
 float	Serie::operator[](int i) const { return SERIE[i]; }
 

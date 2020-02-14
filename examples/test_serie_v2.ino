@@ -21,6 +21,8 @@ void setup() {
   float y0i[n] = { 2, 3.5, 5, 15, 20, 16, 18, 6, 8, 3.5, 5, 10, 12, 10, 12, 18 };
   Serie y0 = Serie(n, "y0"); y0.setSerie(y0i, n); 						                              Serial.println(y0.pr());
   Serie x0 = Serie(n, "x0", 1, 16); 								                                        Serial.println(x0.pr());
+  Serie x00 = x0 | 17;                                                                      Serial.println(x00.pr());
+	x00 |= 18;                                                                                Serial.println(x00.pr());
   Serie yt0 = y0.sousSerie(0, 6) | y0.sousSerie(9, 7); yt0.setNom("yt0"); 			            Serial.println(yt0.pr());
   Serie xt0 = x0.sousSerie(0, 6) | x0.sousSerie(9, 7); xt0.setNom("xt0"); 			            Serial.println(xt0.pr());
   Serie xtr0 = x0.sousSerie(6, 3); xtr0.setNom("xtr0"); 					                          Serial.println(xtr0.pr());

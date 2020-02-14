@@ -33,8 +33,10 @@ public:
 	friend	Serie operator*(const Serie & serie1, const Serie & serie2);
 	friend	Serie operator*(float coef, const Serie & serie2);
 	friend	Serie operator|(const Serie & serie1, const Serie & serie2);
+	friend  Serie operator|(const Serie & serie1, float valeur);
 	friend  void  operator+=(Serie & serie1, const Serie & serie2);
 	friend  void  operator|=(Serie & serie1, const Serie & serie2);
+	friend  void  operator|=(Serie & serie1, float valeur);
 	float&	operator[](int i);
 	float	operator[](int i) const;
 	
