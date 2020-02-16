@@ -46,14 +46,21 @@ The Serie object is composed of the following arguments :
 * **autoCorrelation()**: coming soon
 
 ## Transformation functions of a series
-### Processing functions
+### filtered series functions
 * **ecretage()**: New series with application of a minimum, maximum threshold for each value
+* **lisSpline()**: Generation of a smoothed series by cubic spline of the series
+* **lisHP()**: Generation of a smoothed series by Hodrick-Prescott filter (tbd)
+* **lisMA()**: Generation of a smoothed series by moving-average filter (tbd)
+* **lisSG()**: Generation of a smoothed series by moving-average Savitzky-Golay filter (tbd)
+* **lisWA()**: Generation of a smoothed series by weighted-moving-average filter (tbd)
+* **lisES()**: Generation of a smoothed series by exponential smoothing filter (tbd)
+### reduced series functions
 * **regPol()**: Generation of a reduced series by polynomial regression of the series
+### extended series functions
 * **intPol()**: Generation of an extended series by polynomial interpolation of the series
 * **intLin()**: Generation of an extended series by linear interpolation of the series
 * **intCont()**: Generation of missing terms of a series by cubic polynomial interpolation of the series
 * **intSpline()**: Generation of an extended series by cubic spline of interpolation of the series
-* **lisSpline()**: Generation of a smoothed series by cubic spline of the series
 ### Conversion functions
 * **codage()**: Transformation of the series into a series of bits by coding each value of the series
 * **decodage()**: Transformation of a series of bits into a series of values by decoding each value of the series
