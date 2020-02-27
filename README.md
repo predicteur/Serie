@@ -50,8 +50,9 @@ The Serie object is composed of the following arguments :
 * **ecretage()**: New series with application of a minimum, maximum threshold for each value
 * **lisSpline()**: Generation of a smoothed series by cubic spline of the series
 * **lisHP()**: Generation of a smoothed series by Hodrick-Prescott filter (tbd)
-* **lisMA()**: Generation of a smoothed series by moving-average filter (tbd)
+* **lisSA()**: Generation of a smoothed series by simple moving-average filter (tbd)
 * **lisSG()**: Generation of a smoothed series by moving-average Savitzky-Golay filter (tbd)
+* **lisGA()**: Generation of a smoothed series by moving-average gaussian filter (tbd)
 * **lisWA()**: Generation of a smoothed series by weighted-moving-average filter (tbd)
 * **lisES()**: Generation of a smoothed series by exponential smoothing filter (tbd)
 ### reduced series functions
