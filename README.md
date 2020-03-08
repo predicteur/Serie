@@ -12,7 +12,7 @@ Time series include a series of numerical values.
 The Serie object is composed of the following arguments :
 * **Name :** Character string
 * **Length :** Number of values in the series (integer)
-* **List of values :** The successive numerical values of the series (dynamic array of real)
+* **List of values :** The successive numerical values of the series (dynamic array of real). The most recent value is with 0 index.
 
 ## Creation and update functions
 * **constructor :** Several creation modes are possible
@@ -24,6 +24,8 @@ The Serie object is composed of the following arguments :
 * **operators :** The operators +, -, += and * are overloaded to combine the values of series of the same length. An additional operation (operator | overloaded) makes it possible to group two series. The assignment (operator = overloaded) is used to copy one series to another. The values of the series are directly accessible (operator []).
 
 * **update :** The functions are as follows:
+    * **complete()**: Add a new value in the list
+    * **refresh()**: Add a new value in the list and delete the oldest
     * **sousSerie()**: Generation of a series consisting of an extract from a series
     * **init()**: same as constructor
     * **copie()**: same as copy constructor
@@ -176,7 +178,7 @@ Les séries temporelles comprennent une suite de valeurs numériques.
 L'objet Serie est composé des attributs suivants :
 * **Nom :** Chaîne de caractères
 * **Longueur :** Nombre de valeurs de la série (entier)
-* **Liste de valeurs :** Les valeurs numériques successives de la série (tableau dynamique de valeurs réelles)
+* **Liste de valeurs :** Les valeurs numériques successives de la série (tableau dynamique de valeurs réelles).La plus récente a l'index 0.
 
 ## Fonctions de création et de lecture
 * **constructeur :** Plusieurs modes de création sont possibles
@@ -189,6 +191,8 @@ L'objet Serie est composé des attributs suivants :
 Une opération supplémentaire (opérateur | surchargé) permet de regrouper deux séries. 
 L'affectation (opérateur = surchargé) est utilisée pour copier une série dans une autre. Les valeurs des séries sont accessibles directement (opérateur [] ).
 * **mise à jour :** Les fonctions sont les suivantes :
+    * **complete()**: Ajoute une nouvelle valeur à la liste
+    * **refresh()**: Ajoute une nouvelle valeur à la liste et supprime la dernière
     * **sousSerie()** : Génération d'une série constituée d'un extrait d'une série
     * **init()** : idem constructeur
     * **copie()** : idem constructeur de recopie
