@@ -29,8 +29,9 @@ The Serie object is composed of the following arguments :
     * **sousSerie()**: Generation of a series consisting of an extract from a series
     * **init()**: same as constructor
     * **copie()**: same as copy constructor
-    * **setName()**: name setter
+    * **setNom()**: name setter
     * **setSerie()**: setter of the list of values
+    
 * **getters :** The functions are as follows:
     * **len()**: number of values in the series
     * **lenom()**: name of the series
@@ -51,12 +52,11 @@ The Serie object is composed of the following arguments :
 ### filtered series functions
 * **ecretage()**: New series with application of a minimum, maximum threshold for each value
 * **lisSpline()**: Generation of a smoothed series by cubic spline of the series
-* **lisHP()**: Generation of a smoothed series by Hodrick-Prescott filter (tbd)
-* **lisSA()**: Generation of a smoothed series by simple moving-average filter (tbd)
-* **lisSG()**: Generation of a smoothed series by moving-average Savitzky-Golay filter (tbd)
-* **lisGA()**: Generation of a smoothed series by moving-average gaussian filter (tbd)
-* **lisWA()**: Generation of a smoothed series by weighted-moving-average filter (tbd)
-* **lisES()**: Generation of a smoothed series by exponential smoothing filter (tbd)
+* **lisSA()**: Generation of a smoothed series by simple moving-average filter
+* **lisSG()**: Generation of a smoothed series by moving-average Savitzky-Golay filter
+* **lisGA()**: Generation of a smoothed series by moving-average gaussian filter
+* **lisWA()**: Generation of a smoothed series by weighted-moving-average filter
+* **lisES()**: Generation of a smoothed series by exponential smoothing filter
 ### reduced series functions
 * **regPol()**: Generation of a reduced series by polynomial regression of the series
 ### extended series functions
@@ -215,14 +215,21 @@ L'affectation (opérateur = surchargé) est utilisée pour copier une série dan
 * **autoCorrelation()** : à venir 
 
 ## Fonctions de transformation d'une série
-### Fonctions de traitement
+### Fonctions de filtrage
 * **ecretage()** : Nouvelle série avec application d'un seuil mini, maxi pour chaque valeur
+* **lisSpline()** : Génération d'une série lissée par spline cubique de la série
+* **lisSA()**: Génération d'une série lissée par un filtre moyenne mobile simple
+* **lisSG()**: Génération d'une série lissée par un filtre moyenne mobile Savitzky-Golay
+* **lisGA()**: Génération d'une série lissée par un filtre moyenne mobile gaussien
+* **lisWA()**: Génération d'une série lissée par un filtre moyenne mobile pondérée
+* **lisES()**: Génération d'une série lissée par un filtre moyenne mobile exponentielle
+### Fonctions de réduction de séries
 * **regPol()** : Génération d'une série réduite par régression polynomiale de la série
+### Fonctions d'extension de séries
 * **intPol()** : Génération d'une série étendue par interpolation polynomiale de la série
 * **intLin()** : Génération d'une série étendue par interpolation linéaire de la série
 * **intCont()** : Génération de termes manquants d'une série par interpolation polynomiale cubique de la série
 * **intSpline()** : Génération d'une série étendue par spline cubique d'interpolation de la série
-* **lisSpline()** : Génération d'une série lissée par spline cubique de la série
 ### Fonctions de conversion
 * **codage()** : Transformation de la série en une suite de bits par codage de chaque valeur de la série
 * **decodage()** : Transformation d'une suite de bits en une série de valeurs par decodage de chaque valeur de la série
