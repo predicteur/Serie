@@ -12,7 +12,7 @@ Time series include a series of numerical values.
 The Serie object is composed of the following arguments :
 * **Name :** Character string
 * **Length :** Number of values in the series (integer)
-* **List of values :** The successive numerical values of the series (dynamic array of real)
+* **List of values :** The successive numerical values of the series (dynamic array of real). The most recent value is with 0 index.
 
 ## Creation and update functions
 * **constructor :** Several creation modes are possible
@@ -24,6 +24,8 @@ The Serie object is composed of the following arguments :
 * **operators :** The operators +, -, += and * are overloaded to combine the values of series of the same length. An additional operation (operator | overloaded) makes it possible to group two series. The assignment (operator = overloaded) is used to copy one series to another. The values of the series are directly accessible (operator []).
 
 * **update :** The functions are as follows:
+    * **complete()**: Add a new value in the list
+    * **refresh()**: Add a new value in the list and delete the oldest
     * **sousSerie()**: Generation of a series consisting of an extract from a series
     * **init()**: same as constructor
     * **copie()**: same as copy constructor
@@ -46,14 +48,22 @@ The Serie object is composed of the following arguments :
 * **autoCorrelation()**: coming soon
 
 ## Transformation functions of a series
-### Processing functions
+### filtered series functions
 * **ecretage()**: New series with application of a minimum, maximum threshold for each value
+* **lisSpline()**: Generation of a smoothed series by cubic spline of the series
+* **lisHP()**: Generation of a smoothed series by Hodrick-Prescott filter (tbd)
+* **lisSA()**: Generation of a smoothed series by simple moving-average filter (tbd)
+* **lisSG()**: Generation of a smoothed series by moving-average Savitzky-Golay filter (tbd)
+* **lisGA()**: Generation of a smoothed series by moving-average gaussian filter (tbd)
+* **lisWA()**: Generation of a smoothed series by weighted-moving-average filter (tbd)
+* **lisES()**: Generation of a smoothed series by exponential smoothing filter (tbd)
+### reduced series functions
 * **regPol()**: Generation of a reduced series by polynomial regression of the series
+### extended series functions
 * **intPol()**: Generation of an extended series by polynomial interpolation of the series
 * **intLin()**: Generation of an extended series by linear interpolation of the series
 * **intCont()**: Generation of missing terms of a series by cubic polynomial interpolation of the series
 * **intSpline()**: Generation of an extended series by cubic spline of interpolation of the series
-* **lisSpline()**: Generation of a smoothed series by cubic spline of the series
 ### Conversion functions
 * **codage()**: Transformation of the series into a series of bits by coding each value of the series
 * **decodage()**: Transformation of a series of bits into a series of values by decoding each value of the series
@@ -168,7 +178,7 @@ Les séries temporelles comprennent une suite de valeurs numériques.
 L'objet Serie est composé des attributs suivants :
 * **Nom :** Chaîne de caractères
 * **Longueur :** Nombre de valeurs de la série (entier)
-* **Liste de valeurs :** Les valeurs numériques successives de la série (tableau dynamique de valeurs réelles)
+* **Liste de valeurs :** Les valeurs numériques successives de la série (tableau dynamique de valeurs réelles).La plus récente a l'index 0.
 
 ## Fonctions de création et de lecture
 * **constructeur :** Plusieurs modes de création sont possibles
@@ -181,6 +191,8 @@ L'objet Serie est composé des attributs suivants :
 Une opération supplémentaire (opérateur | surchargé) permet de regrouper deux séries. 
 L'affectation (opérateur = surchargé) est utilisée pour copier une série dans une autre. Les valeurs des séries sont accessibles directement (opérateur [] ).
 * **mise à jour :** Les fonctions sont les suivantes :
+    * **complete()**: Ajoute une nouvelle valeur à la liste
+    * **refresh()**: Ajoute une nouvelle valeur à la liste et supprime la dernière
     * **sousSerie()** : Génération d'une série constituée d'un extrait d'une série
     * **init()** : idem constructeur
     * **copie()** : idem constructeur de recopie
