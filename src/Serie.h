@@ -40,27 +40,39 @@ public:
 	float&	operator[](int i);
 	float	operator[](int i) const;
 	
-	// setters - getters
+	// update
+	void	init(float dep, float fin);
+	void	refresh(float valeur);
+	void	complete(float valeur);
+	Serie	copie();
 	void	setNom(String nom);
 	void	setSerie(float* serie, int len);
+	Serie	sousSerie(int indice, int len2);
+
+	// getters
 	String  lenom();
 	int		len();
 	float*  serie();
 
 	// analysing and transformation functions
-	void	init(float dep, float fin);
 	String pr();
-	Serie	copie();
 	float   ecDiff(Serie y);
 	float   etDiff(Serie y);
 	float	moyenne();
 	float	ecartType();
-	Serie	ecretage(float mini, float maxi);
-	Serie	sousSerie(int indice, int len2);
 	Serie   normalisation(float mini, float maxi);
 	Serie	denormalisation(float mini, float maxi);
 	Serie   codage(int nbreg0, int bit);
 	Serie   decodage(int nbreg0, int bit);
+	Serie	ecretage(float mini, float maxi);
+
+	static Serie	lisSpline(Serie xp, Serie yp, float lamb);
+	static Serie	lisMA(Serie yp, Serie coef, String name, bool causal);
+	static Serie	lisSA(Serie yp, int largeur, bool causal);
+	static Serie	lisSG(Serie yp, int largeur, int degre, bool causal);
+	static Serie	lisGA(Serie yp, int largeur, bool causal);
+	static Serie	lisWA(Serie yp, int largeur, bool causal);
+	static Serie	lisES(Serie yp, float alpha, bool doub);
 
 	static float	etDiff(Serie x, Serie y);
 	static float	ecDiff(Serie x, Serie y);
@@ -68,12 +80,13 @@ public:
 	static long		conversion(float valeur, float mini, float maxi, int bits);
 	static Serie	codbin(long param, int lon);
 	static long		decbin(Serie payl, int lon);
+
+	static Serie	regPol(Serie xn, Serie yn, Serie xp);
+
 	static Serie	intCont(float x0, float y0, float yp0, float x1, float y1, float yp1, Serie xi);
 	static Serie	intLin(Serie xp, Serie yp, Serie xn);
-	static Serie	regPol(Serie xn, Serie yn, Serie xp);
 	static Serie	intPol(Serie xp, Serie yp, Serie xn);
 	static Serie	intSpline(Serie xp, Serie yp, Serie xn, float prem, float der);
-	static Serie	lisSpline(Serie xp, Serie yp, float lamb);
 };
 
 extern Serie sn;

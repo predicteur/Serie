@@ -138,6 +138,23 @@ Serie	Serie::copie() {
 	return z;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
+/* Add a new value in the list and delete the oldest
+*/
+void	Serie::refresh(float valeur) {
+	for (int i = LEN - 2; i > -1; i--) SERIE[i + 1] = SERIE[i];
+	SERIE[0] = valeur;
+}
+//-----------------------------------------------------------------------------------------------------------------------------
+/* Add a new value in the list
+*/
+void	Serie::complete(float valeur) {
+	float* seri = new float[LEN + 1];
+	for (int i = 0; i < LEN; i++) seri[i + 1] = SERIE[i];
+	seri[0] = valeur;
+	setSerie(seri, LEN + 1);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------
 /* average value of the differences (absolute value) between the two series
 */
 float	Serie::ecDiff(Serie y) {
@@ -235,7 +252,7 @@ float	Serie::ecDiff(Serie serie1, Serie serie2) { return serie1.ecDiff(serie2); 
 //-----------------------------------------------------------------------------------------------------------------------------
 /* conversion of a value(valeur) between mini and maxi in an integer between 0 and 2**bits 
 */
-long		Serie::conversion(float valeur, float mini, float maxi, int bits) {
+long	Serie::conversion(float valeur, float mini, float maxi, int bits) {
 	int val = int(floor(pow(2, bits) * (valeur - mini) / (maxi - mini)));
 	return max(0, min(int(pow(2, bits) - 1), val));
 }
@@ -429,6 +446,110 @@ Serie	Serie::intSpline(Serie xp, Serie yp, Serie xn, float prem, float der) {
 	}
 	delete[] h, r, f, m, c, cp;
 	return yn;
+}
+//-----------------------------------------------------------------------------------------------------------------------------
+/* Generation of a smoothed series by moving-average filter
+@arg yp : coordinate of the points
+@arg coef : coefficients of the filter
+@arg name : filter's name
+@arg causal : True if the coefficients are not applied to the future values, False if they are applied either to past and future values 
+@result : y-coordinate of the new filtered points
+*/
+Serie	Serie::lisMA(Serie yp, Serie coef, String name, bool causal) {
+	Serie ypf(yp.len(), name);
+	int   lon = coef.len();
+	if (causal) lon = (coef.len() - 1) / 2 + 1;
+	for (int i = 0; i < yp.len(); i++) {
+		float totcoef = 0;
+		for (int j = 0; j < lon; j++) {
+			ypf[i] += yp[max(0, min(yp.len() - 1, i + j - (coef.len() - 1) / 2))] * coef[j];
+			totcoef += coef[j];
+		}
+		ypf[i] /= totcoef;
+	}
+	return ypf;
+}
+//-----------------------------------------------------------------------------------------------------------------------------
+/* Generation of a smoothed series by simple moving - average filter
+@arg yp : coordinate of the points
+@arg largeur : number of coefficients
+@arg causal : True if the coefficients are not applied to the future values, False if they are applied either to past and future values
+@result : y-coordinate of the new filtered points
+*/
+Serie	Serie::lisSA(Serie yp, int largeur, bool causal) {
+	int demi = (largeur - 1) % 2;
+	Serie coef(largeur + demi, "cSA", 1);
+	if (demi) {
+		coef[0] = 0.5;
+		coef[coef.len() - 1] = 0.5;
+	}
+	return lisMA(yp, coef, "ySA", causal);
+}
+//-----------------------------------------------------------------------------------------------------------------------------
+/* Generation of a smoothed series by moving-average Savitzky-Golay filter -> see wikipedia : Algorithme_de_Savitzky-Golay
+@arg yp : coordinate of the points
+@arg largeur : number of coefficients (5, 7, 9)
+@arg degre : level of the polynome (2 or 4)
+@arg causal : True if the coefficients are not applied to the future values, False if they are applied either to past and future values
+@result : y-coordinate of the new filtered points
+*/
+Serie	Serie::lisSG(Serie yp, int largeur, int degre, bool causal) {
+	float coefSG[2][3][5] = { { { 17, 12, -3, 0, 0 },{ 7, 6, 3, -2, 0 },{ 59, 54, 39, 14, -21 } },
+	{ { 0, 0, 0, 0, 0 },{ 131, 75, -30, 5, 0 },{ 179, 135, 30, -55, 15 } } };
+	int deg = degre / 2 - 1;
+	int	lar = (largeur - 1) / 2 - 2;
+	Serie coef(largeur, "cSG");
+	for (int i = 0; i < largeur; i++) coef[i] = coefSG[deg][lar][abs((largeur - 1) / 2 - i)];
+	return lisMA(yp, coef, "ySG", causal);
+}
+//-----------------------------------------------------------------------------------------------------------------------------
+/* Generation of a smoothed series by moving-average gaussian filter
+@arg yp : coordinate of the points
+@arg largeur : number of coefficients (odd)
+@arg causal : True if the coefficients are not applied to the future values, False if they are applied either to past and future values
+@result : y-coordinate of the new filtered points
+*/
+Serie	Serie::lisGA(Serie yp, int largeur, bool causal) {
+	float coefGA[4][9] = { { 0, 0, 0, 1, 2, 1, 0, 0, 0 },{ 0, 0, 1, 4, 6, 4, 1, 0, 0 },
+	{ 0, 1, 6, 15, 20, 15, 6, 1, 0 },{ 1, 8, 28, 56, 70, 56, 28, 8, 1 } };
+	int lar = (largeur - 1) / 2 - 1;
+	Serie coef(9, "cSG");
+	for (int i = 0; i < 9; i++) coef[i] = coefGA[lar][i];
+	return lisMA(yp, coef, "yGA", causal);
+}
+//-----------------------------------------------------------------------------------------------------------------------------
+/* Generation of a smoothed series by weighted-moving-average filter
+@arg yp : coordinate of the points
+@arg largeur : number of coefficients (odd)
+@arg causal : True if the coefficients are not applied to the future values, False if they are applied either to past and future values
+@result : y-coordinate of the new filtered points
+*/
+Serie	Serie::lisWA(Serie yp, int largeur, bool causal) {
+	int demi = (largeur - 1) / 2;
+	Serie coef(largeur, "cWA");
+	for (int i = 0; i < demi + 1; i++) {
+		coef[i + demi] = float(demi + 1 - i);
+		coef[-i + demi] = float(demi + 1 - i);
+	}
+	return lisMA(yp, coef, "yWA", causal);
+}
+//-----------------------------------------------------------------------------------------------------------------------------
+/* Generation of a smoothed series by exponential smoothing filter
+@arg yp : coordinate of the points
+@arg alpha : degree of weighting decrease, a constant smoothing factor between 0 and 1
+@arg doub : True for Double exponential smoothing, False for Basic exponential smoothing
+@result : y-coordinate of the new filtered points
+*/
+Serie	Serie::lisES(Serie yp, float alpha, bool doub) {
+	Serie ypf1(yp.len(), "ypf1", yp[0]), ypf2(yp.len(), "ypf2", yp[0]), ypf;
+	for (int i = 1; i < yp.len(); i++) {
+		ypf1[i] = alpha * yp[i] + (1.0f - alpha)*ypf1[i - 1];
+		ypf2[i] = alpha * ypf1[i] + (1.0f - alpha)*ypf2[i - 1];
+	}
+	if (doub) ypf = 2.0 * ypf1 - ypf2;
+	else ypf = ypf1;
+	ypf.setNom("yES");
+	return ypf;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
 /* Generation of a smoothed series by cubic spline of the series
