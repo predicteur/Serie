@@ -1,9 +1,10 @@
 # Presentation
 This repository groups together a set of time series functions. They are written in C ++ to be used on data acquisition equipment (eg ESP / Arduino).
 
-Two types of objects are used:
+Three types of objects are used:
 * Serie : object representing time series,
 * Compactor / Compressor : object representing the compression of a time series,
+* Mesure : objet representing a set of attributes or time series to be managed,
 
 # Object Serie
 Time series include a series of numerical values.
@@ -34,7 +35,7 @@ The Serie object is composed of the following arguments :
     
 * **getters :** The functions are as follows:
     * **len()**: number of values in the series
-    * **lenom()**: name of the series
+    * **getNom()**: name of the series
     * **serie()**: list of values in the series    
 
 ## Functions for analyzing a series
@@ -46,6 +47,7 @@ The Serie object is composed of the following arguments :
 * **etDiff()**: square root of the mean of the squares of the differences between the two series
 ### Other
 * **pr()**: display of the series
+* **json()**: display of the series with Json structure
 * **autoCorrelation()**: coming soon
 
 ## Transformation functions of a series
@@ -168,9 +170,10 @@ See the examples given on the two types of regressions.
 # Présentation
 Ce repository regroupe un ensemble de fonctions de traitement de séries temporelles. Elles sont écrites en C++ pour être utilisées sur des équipements d'acquisition de données (ex. ESP / Arduino).
 
-Deux types d'objets sont utilisés :
-* Serie : objet représentant les série temporelles,
+Trois types d'objets sont utilisés :
+* Serie : objet représentant une série temporelle,
 * Compactor / Compressor : objet représentant la compression d'une série temporelle,
+* Mesure : objet représentant l'ensemble des attributs et des séries temporelles qui composent une mesure
 
 # Objet Serie
 Les séries temporelles comprennent une suite de valeurs numériques.
