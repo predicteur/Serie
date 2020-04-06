@@ -2,18 +2,64 @@
 This repository groups together a set of time series functions. They are written in C ++ to be used on data acquisition equipment (eg ESP / Arduino).
 
 Three types of objects are used:
+* Mesure : objet representing a set of attributes or time series to be managed,
 * Serie : object representing time series,
 * Compactor / Compressor : object representing the compression of a time series,
-* Mesure : objet representing a set of attributes or time series to be managed,
+
+# Object Mesure
+Mesure include a list of data to define a mesure.
+
+## Principle of representation
+The Mesure object is composed of the following arguments :
+* **Nom :** Character string
+* list of Serie define with
+   * **Series :** list of Serie
+   * **NbSer :** Number of Serie in the list
+   * **LenSer :** Number of values for all Serie in the list
+* list of attributes (String) define with
+   * **Strs :** list of String
+   * **NameStrs :** list of String (name of each String)
+   * **NbStr :** Number of attributes String
+* list of attributes (Float) define with
+   * **Atts :** list of Float
+   * **NameAtts :** list of String (name of each Float)
+   * **NbAtt :** Number of attributes Float
+
+## Creation and update functions
+* **constructor :** Several creation modes are possible
+    * Empty Mesure
+    * Mesure with number and lenght of data but without names
+    * Mesure with number, lenght and name of data
+
+* **operators :** The operators [] is used to access to the values of the series.
+
+* **update :** The functions are as follows:
+    * **refresh()**: Add a new value and delete the oldest for all series
+    * **init()**: initialization for names and values 
+    * **initNoms()**: initialization for names 
+    * **initSeries()**: initialization for values of series 
+    * **setVal()**: value setter for string and float
+    
+* **getters :** The functions are as follows:
+    * **getString()**: value of string attribute
+    * **getFloat()**: value of float attribute
+    * **getNom()**: name of the series
+
+## Functions for analyzing a Mesure
+* **pr()**: display of the mesure
+* **json()**: display of the mesure with Json structure
+
+## Use
+See the examples given on the use of the Mesure object.
 
 # Object Serie
 Time series include a series of numerical values.
 
 ## Principle of representation
 The Serie object is composed of the following arguments :
-* **Name :** Character string
-* **Length :** Number of values in the series (integer)
-* **List of values :** The successive numerical values of the series (dynamic array of real). The most recent value is with 0 index.
+* **Nom :** Character string
+* **Len :** Number of values in the series (integer)
+* **Serie :** The successive numerical values of the series (dynamic array of real). The most recent value is with 0 index.
 
 ## Creation and update functions
 * **constructor :** Several creation modes are possible
@@ -22,6 +68,7 @@ The Serie object is composed of the following arguments :
     * Series of a given length with the values initialized to a given value
     * Series of a given length with the values initialized by distribution between a starting point and an ending point
     * Series created by copying from another series
+
 * **operators :** The operators +, -, += and * are overloaded to combine the values of series of the same length. An additional operation (operator | overloaded) makes it possible to group two series. The assignment (operator = overloaded) is used to copy one series to another. The values of the series are directly accessible (operator []).
 
 * **update :** The functions are as follows:
@@ -171,9 +218,56 @@ See the examples given on the two types of regressions.
 Ce repository regroupe un ensemble de fonctions de traitement de séries temporelles. Elles sont écrites en C++ pour être utilisées sur des équipements d'acquisition de données (ex. ESP / Arduino).
 
 Trois types d'objets sont utilisés :
+* Mesure : objet représentant l'ensemble des attributs et des séries temporelles qui composent une mesure
 * Serie : objet représentant une série temporelle,
 * Compactor / Compressor : objet représentant la compression d'une série temporelle,
-* Mesure : objet représentant l'ensemble des attributs et des séries temporelles qui composent une mesure
+
+# Objet Mesure
+L'objet Mesure se compose de la liste des données qui définissent une mesure.
+
+## Princie de representation
+L'objet Mesure est composé des arguments suivants :
+* **Nom :** Chaine de caractères (nom de la mesure)
+* liste d'objets Serie definie par
+   * **Series :** liste de Serie
+   * **NbSer :** Nombre de Serie de la liste
+   * **LenSer :** Nombre de valeurs qui composent les Serie de la liste
+* list of attributes (String) define with
+   * **Strs :** list of String
+   * **NameStrs :** list of String (name of each String)
+   * **NbStr :** Number of attributes String
+* list of attributes (Float) define with
+   * **Atts :** list of Float
+   * **NameAtts :** list of String (name of each Float)
+   * **NbAtt :** Number of attributes Float
+
+## Creation and update functions
+* **constructor :** Several creation modes are possible
+    * Empty Mesure
+    * Mesure with number and lenght of data but without names
+    * Mesure with number, lenght and name of data
+
+* **operators :** The operators [] is used to access to the values of the series.
+
+* **update :** The functions are as follows:
+    * **refresh()**: Add a new value and delete the oldest for all series
+    * **init()**: initialization for names and values 
+    * **initNoms()**: initialization for names 
+    * **initSeries()**: initialization for values of series 
+    * **setVal()**: value setter for string and float
+    
+* **getters :** The functions are as follows:
+    * **getString()**: value of string attribute
+    * **getFloat()**: value of float attribute
+    * **getNom()**: name of the series
+
+## Functions for analyzing a Mesure
+* **pr()**: display of the mesure
+* **json()**: display of the mesure with Json structure
+
+## Use
+See the examples given on the use of the Mesure object.
+
 
 # Objet Serie
 Les séries temporelles comprennent une suite de valeurs numériques.
