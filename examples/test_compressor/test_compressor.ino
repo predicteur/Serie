@@ -11,14 +11,14 @@ using namespace std;
 
 void setup() {
   Serial.begin(115200);                                       
-  delay(10); Serial.println('\n');
+  delay(10); Serial.println(); Serial.println();
 
   // données d'exemple  
-  Serial.println("données exemple : "+'\n');
+  Serial.println("données exemple : ");
   const int n = 16;
   float y0i[n] = { 2, 3.5, 5, 15, 20, 16, 18, 6, 8, 3.5, 5, 10, 12, 10, 12, 18 };
   Serie y0 = Serie(n, "y0"); y0.setSerie(y0i, n); 						                              Serial.println(y0.pr());
-  Serie x0 = Serie(n, "x0", 1, 16); 								                                        Serial.println(x0.pr());
+  Serie x0 = Serie(n, "x0", 1, 16); 								                                        Serial.println(x0.pr() +'\n');
   
   // parametres normalistion
   float mini = 0.0; // plage mini et maxi des mesures prise en compte(écrétage sinon)
@@ -49,7 +49,7 @@ void setup() {
     y2 = combo.simul();
     y21 = combo.decompressY0(combo.compress());
     float ectc2 = combo.ecartTypeSimul(false);*/
-    Serial.println("compression 1 :" +'\n');
+    Serial.println("compression 1 :"); Serial.println();
     Serial.println(" bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); // bits :  3  taux : 0.012
     Serial.println("ectc1 : " + String(ectc1[0]) + String(comp.decompressEct(comp.compress())[0])); // ectc1 : 5.71 0.0
     Serial.println(y1.pr()); 
@@ -65,7 +65,7 @@ void setup() {
     Serie y1 = comp.simul(); // [7.81, 8.23, 8.65, 9.06, 9.48, 9.90, 10.31, 10.73, 11.15, 11.56, 11.98, 12.40, 12.81, 13.23, 13.64, 14.06]
     Serie ectc1 = comp.ecartTypeSimul(false); // 5.55
     // résultats identiques avec Compressor
-    Serial.println("compression 2 :" +'\n');
+    Serial.println("compression 2 :");Serial.println();
     Serial.println("bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); //bits :  6  taux : 0.023
     Serial.println("ectc1 : " + String(ectc1[0]) + String(comp.decompressEct(comp.compress())[0])); // ectc1 : 5.55 0.0
     Serial.println(y1.pr()+'\n');
@@ -80,7 +80,7 @@ void setup() {
     Serie y1 = comp.simul(); // [1.56   5.12  10.00  14.06  16.20  16.09  14.06  10.83   7.38   4.69   3.62   4.67   7.81  12.26  16.33  17.19]
     Serie ectc1 = comp.ecartTypeSimul(false); // 3.12
     // résultats identiques avec Compressor
-    Serial.println("compression 3 : " +'\n');
+    Serial.println("compression 3 : "); Serial.println();
     Serial.println("bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); //bits : 18  taux :  0.070
     Serial.println("ectc1 : " + String(ectc1[0]) + String(comp.decompressEct(comp.compress())[0])); // ectc1 : 3.12 0.0
     Serial.println(y1.pr()+'\n');
@@ -99,7 +99,7 @@ void setup() {
     Serie ectc2 = combo.ecartTypeSimul(false);
     float precision = combo.precisionCodage();
 
-    Serial.println("compression 4 : " +'\n');
+    Serial.println("compression 4 : "); Serial.println();
     Serial.println("bits : " + String(combo.taillePayload()) + " taux : " + String(combo.tauxCompression())); // bits :  48  taux : 0.188
     Serial.println("ectc2, precision : " + String(ectc2[0]) + String(combo.decompressEct(combo.compress())[0]) + " " + String(precision)); // ectc2 : 0.89 0.0 3.57
     Serial.println(y2.pr());
@@ -121,7 +121,7 @@ void setup() {
     Serie ectc2 = combo.ecartTypeSimul(false);
     float precision = combo.precisionCodage();
 
-    Serial.println("compression 5 : " +'\n');
+    Serial.println("compression 5 : ");Serial.println();
     Serial.println("bits : " + String(combo.taillePayload()) + " taux : " + String(combo.tauxCompression())); // bits :  27  taux : 0.11
     Serial.println("ectc2, precision : " + String(ectc2[0]) + String(combo.decompressEct(combo.compress())[0]) + " " + String(precision)); // ectc2 : 2.94 0.0 7.62
     Serial.println(y2.pr());

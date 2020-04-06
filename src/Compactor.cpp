@@ -90,7 +90,7 @@ Serie Compactor::decompressY0(Serie payload, int taille){
 		float *xpSerie = new float[NBREG0];
 		for (int i = 0; i < NBREG0; i++) xpSerie[i] = float((taille - 1) * i / (NBREG0 - 1));
 		if (NBREG0 > 1) xp.setSerie(xpSerie, NBREG0);
-		delete xpSerie;
+		delete [] xpSerie;
 	}
 	return Serie::intPol(xp, decompressYp(payload), xn).denormalisation(MINI, MAXI);
 }

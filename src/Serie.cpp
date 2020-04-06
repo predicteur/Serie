@@ -48,10 +48,10 @@ Serie::Serie(const Serie & serie) {
 	SERIE = new float[LEN];
 	for (int i = 0; i<LEN; i++) SERIE[i] = serie.SERIE[i];
 }
-Serie::~Serie() { delete SERIE; }
+Serie::~Serie() { delete [] SERIE; }
 Serie & Serie::operator=(const Serie & z) {
 	LEN = z.LEN; NOM = z.NOM;
-	delete SERIE;
+	delete [] SERIE;
 	SERIE = new float[LEN];
 	for (int i = 0; i<LEN; i++) SERIE[i] = z.SERIE[i];
 	return *this;
@@ -94,8 +94,8 @@ Serie	operator*(float coef, const Serie & serie) {
 void	operator+=(Serie & serie1, const Serie & serie2) { serie1 = serie1 + serie2; }
 void	operator|=(Serie & serie1, const Serie & serie2) { serie1 = serie1 | serie2; }
 void 	operator|=(Serie & serie1, float valeur) { serie1 = serie1 | valeur; }
-float&	Serie::operator[](int i) { return SERIE[i]; }
-float	Serie::operator[](int i) const { return SERIE[i]; }
+float&	Serie::operator[](int i) { float *nul = 0;  if (i < LEN) return SERIE[i]; else return *nul; }
+float	Serie::operator[](int i) const { float nul = 0;  if (i < LEN) return SERIE[i]; else return nul; }
 
 //******************************************************************************
 //* Class Functions
@@ -107,6 +107,7 @@ float	Serie::operator[](int i) const { return SERIE[i]; }
 void	Serie::init(float dep, float fin) {
 	if (LEN > 0) for (int i = 0; i < LEN; i++) SERIE[i] = dep + i * (fin - dep) / float(LEN - 1);
 }
+void Serie::init(float dep) { init(dep, dep); }
 //-----------------------------------------------------------------------------------------------------------------------------
 /* Print Serie : generate a string with name and values
 */
@@ -117,15 +118,32 @@ String	Serie::pr() {
 	return valeur;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
+/* Json Serie : generate a string with Json structure
+*/
+String	Serie::json(int lenserie) {
+	String json = "{ \"serie\" : \"" + NOM + "\" , \"value\" : ";
+	if (lenserie == 1) json += String(SERIE[0]);
+	else {
+		json += " [ ";
+		for (int i = 0; i < min(LEN, lenserie); i++) {
+			if (i > 0) json += " , ";
+			json += String(SERIE[i]);
+		}
+		json += " ] ";
+	}
+	json += " }";
+	return json;
+}
+//-----------------------------------------------------------------------------------------------------------------------------
 /* getters - setters
 */
 void	Serie::setNom(String nom) { NOM = nom; }
-String  Serie::lenom() { return NOM; }
+String  Serie::getNom() { return NOM; }
 int		Serie::len() { return LEN; }
 float*	Serie::serie() { return SERIE; }
 void	Serie::setSerie(float* serie, int len) {
 	LEN = len;
-	delete SERIE;
+	delete [] SERIE;
 	SERIE = new float[LEN];
 	for (int i = 0; i < LEN; i++) SERIE[i] = serie[i];
 }
@@ -152,6 +170,7 @@ void	Serie::complete(float valeur) {
 	for (int i = 0; i < LEN; i++) seri[i + 1] = SERIE[i];
 	seri[0] = valeur;
 	setSerie(seri, LEN + 1);
+	delete [] seri;
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------
@@ -239,6 +258,30 @@ Serie	Serie::decodage(int nbreg0, int bit) {
 	for (int i = 0; i < nbreg0; i++) yp0[i] = conversionb(decbin(this->sousSerie(i * bit, bit), bit), -0.5, 0.5, bit);
 	return yp0;
 }
+//-----------------------------------------------------------------------------------------------------------------------------
+/* eg static functions
+@arg-new dernier :  to change only the 0 value (true)
+*/
+void  Serie::lissSA(Serie yp, int larg, bool causal, bool dernier) {
+	if (dernier) SERIE[0] = lisSA(yp, larg, causal)[0];
+	else setSerie(lisSA(yp, larg, causal).serie(), yp.len());
+}
+void  Serie::lissSG(Serie yp, int larg, int degre, bool causal, bool dernier) {
+	if (dernier) SERIE[0] = lisSG(yp, larg, degre, causal)[0];
+	else setSerie(lisSG(yp, larg, degre, causal).serie(), yp.len());
+}
+void  Serie::lissGA(Serie yp, int larg, bool causal, bool dernier) {
+	if (dernier) SERIE[0] = lisGA(yp, larg, causal)[0];
+	else setSerie(lisGA(yp, larg, causal).serie(), yp.len());
+}
+void  Serie::lissWA(Serie yp, int larg, bool causal, bool dernier) {
+	if (dernier) SERIE[0] = lisWA(yp, larg, causal)[0];
+	else setSerie(lisWA(yp, larg, causal).serie(), yp.len());
+}
+void  Serie::lissES(Serie yp, float alpha, bool doub, bool dernier) {
+	if (dernier) SERIE[0] = lisES(yp, alpha, doub)[0];
+	else setSerie(lisES(yp, alpha, doub).serie(), yp.len());
+}
 
 //******************************************************************************
 //* Static Functions
@@ -252,20 +295,20 @@ float	Serie::ecDiff(Serie serie1, Serie serie2) { return serie1.ecDiff(serie2); 
 //-----------------------------------------------------------------------------------------------------------------------------
 /* conversion of a value(valeur) between mini and maxi in an integer between 0 and 2**bits 
 */
-long	Serie::conversion(float valeur, float mini, float maxi, int bits) {
+uint32_t	Serie::conversion(float valeur, float mini, float maxi, int bits) {
 	int val = int(floor(pow(2, bits) * (valeur - mini) / (maxi - mini)));
 	return max(0, min(int(pow(2, bits) - 1), val));
 }
 //-----------------------------------------------------------------------------------------------------------------------------
 /* conversion of an integer(valeurb) between 0 and 2**bits to a value between mini and maxi
 */
-float	Serie::conversionb(long valeurb, float mini, float maxi, int bits) {
+float	Serie::conversionb(uint32_t valeurb, float mini, float maxi, int bits) {
 	return float(mini + (maxi - mini) * (float(valeurb) + 0.5) / pow(2, bits));
 }
 //-----------------------------------------------------------------------------------------------------------------------------
 /* conversion of an integer (param) between 0 and 2**lon in a Serie of values 0 or 1
 */
-Serie	Serie::codbin(long param, int lon) {
+Serie	Serie::codbin(uint32_t param, int lon) {
 	//for (int i = 0; i<lon; i++) payl[rang + i] = bitRead(param, i);
 	Serie payl(lon, "payl");
 	for (int i = 0; i < lon; i++) {
@@ -277,10 +320,10 @@ Serie	Serie::codbin(long param, int lon) {
 //-----------------------------------------------------------------------------------------------------------------------------
 /* conversion of a Serie of values 0 or 1 in an integer between 0 and 2**lon
 */
-long	Serie::decbin(Serie payl, int lon) {
-	long param = 0;
+uint32_t Serie::decbin(Serie payl, int lon) {
+	uint32_t param = 0;
 	//for (int i = 0; i<lon; i++) bitWrite(param, i, payl[rang + i]);
-	for (int i = 0; i < lon; i++) param += (long)(payl[i] * pow(2, i));
+	for (int i = 0; i < lon; i++) param += (uint32_t)round(payl[i] * pow(2, i));
 	return param;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
@@ -314,7 +357,7 @@ Serie	Serie::intCont(float x0, float y0, float yp0, float x1, float y1, float yp
 	Matrix.Multiply(Mat, Y01, 4, 4, 1, matP);
 	Matrix.Multiply(Xi, matP, ni, 4, 1, Yi);
 	for (int i = 0; i < ni; i++) yi[i] = (float)Yi[i];
-	delete[] Y01, Xi, Yi, matP, Mat;
+	delete[] Y01; delete[] Xi; delete[] Yi; delete[] matP; delete[] Mat;
 	return yi;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
@@ -370,7 +413,7 @@ Serie	Serie::regPol(Serie xn, Serie yn, Serie xp) {
 		Matrix.Multiply(matXp, matP, p, p, 1, matY);
 		for (int i = 0; i < p; i++) yp[i] = (float)matY[i];
 	}
-	delete[] s, matXp, matS, matP, matT, matY;
+	delete [] s; delete[] matXp; delete[] matS; delete[] matP; delete[] matT; delete[] matY;
 	return yp;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
@@ -400,7 +443,7 @@ Serie	Serie::intPol(Serie xp, Serie yp, Serie xn) {
 		Matrix.Multiply(Xn, matP, n, p, 1, matyn);
 		for (int i = 0; i < n; i++) yn[i] = (float)matyn[i];
 	}
-	delete[] Xn, Xp, matyp, matP, matyn;
+	delete [] Xn; delete[] Xp; delete[] matyp; delete[] matP; delete[] matyn;
 	return yn;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
@@ -444,7 +487,7 @@ Serie	Serie::intSpline(Serie xp, Serie yp, Serie xn, float prem, float der) {
 			}
 		}
 	}
-	delete[] h, r, f, m, c, cp;
+	delete [] h; delete[] r; delete[] f; delete[] m; delete[] c; delete[] cp;
 	return yn;
 }
 //-----------------------------------------------------------------------------------------------------------------------------
@@ -462,7 +505,7 @@ Serie	Serie::lisMA(Serie yp, Serie coef, String name, bool causal) {
 	for (int i = 0; i < yp.len(); i++) {
 		float totcoef = 0;
 		for (int j = 0; j < lon; j++) {
-			ypf[i] += yp[max(0, min(yp.len() - 1, i + j - (coef.len() - 1) / 2))] * coef[j];
+			ypf[i] += yp[max(0, min(yp.len() - 1, i - j + (coef.len() - 1) / 2))] * coef[j];
 			totcoef += coef[j];
 		}
 		ypf[i] /= totcoef;
@@ -542,9 +585,9 @@ Serie	Serie::lisWA(Serie yp, int largeur, bool causal) {
 */
 Serie	Serie::lisES(Serie yp, float alpha, bool doub) {
 	Serie ypf1(yp.len(), "ypf1", yp[0]), ypf2(yp.len(), "ypf2", yp[0]), ypf;
-	for (int i = 1; i < yp.len(); i++) {
-		ypf1[i] = alpha * yp[i] + (1.0f - alpha)*ypf1[i - 1];
-		ypf2[i] = alpha * ypf1[i] + (1.0f - alpha)*ypf2[i - 1];
+	for (int i = yp.len() - 2; i >= 0; i--) {
+		ypf1[i] = alpha * yp[i] + (1.0f - alpha)*ypf1[i + 1];
+		ypf2[i] = alpha * ypf1[i] + (1.0f - alpha)*ypf2[i + 1];
 	}
 	if (doub) ypf = 2.0 * ypf1 - ypf2;
 	else ypf = ypf1;
@@ -584,6 +627,6 @@ Serie	Serie::lisSpline(Serie xp, Serie yp, float lamb) {
 	if (resOk == 0) return ype;
 	Matrix.Multiply(k, matyp, p, p, 1, matype);
 	for (int i = 0; i < p; i++) ype[i] = (float)matype[i];
-	delete[] h, q, qt, r, rqt, k, matyp, matype;
+	delete [] h; delete[] q; delete[] qt; delete[] r; delete[] rqt; delete[] k; delete[] matyp; delete[] matype;
 	return ype;
 }

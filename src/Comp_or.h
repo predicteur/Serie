@@ -32,9 +32,11 @@ protected:
 public:
 	Comp_or(float mini, float maxi, int bits, int bitEct, int bitYp, int codageEct);
 	~Comp_or();
-	float		precisionCodage();
 	int			taillePayload();
 	float		tauxCompression();
+	float		tauxCompression(int taille);
+
+	float		precisionCodage();
 	String		check();
 	Serie		simul();
 	Serie		ecartTypeSimul(bool codec);

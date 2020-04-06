@@ -43,6 +43,7 @@ int		Comp_or::taillePayload()	{ return BITS; }
 //-----------------------------------------------------------------------------------------------------------------------------
 /* ratio between the number of bits after compression and the number of bits before compression (2 bytes per value) */
 float	Comp_or::tauxCompression()	{ return float(BITS) / float(y0.len()) / 16.0f; }
+float	Comp_or::tauxCompression(int taille) { return float(BITS) / float(taille) / 16.0f; }
 //-----------------------------------------------------------------------------------------------------------------------------
 /* simulated values after compression / decompression (usable after calcul) */
 Serie	Comp_or::simul()			{ return yr0; }

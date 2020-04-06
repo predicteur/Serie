@@ -42,6 +42,7 @@ public:
 	
 	// update
 	void	init(float dep, float fin);
+	void	init(float dep);
 	void	refresh(float valeur);
 	void	complete(float valeur);
 	Serie	copie();
@@ -50,12 +51,13 @@ public:
 	Serie	sousSerie(int indice, int len2);
 
 	// getters
-	String  lenom();
+	String  getNom();       
 	int		len();
 	float*  serie();
 
 	// analysing and transformation functions
-	String pr();
+	String	pr();
+	String	json(int lenserie);
 	float   ecDiff(Serie y);
 	float   etDiff(Serie y);
 	float	moyenne();
@@ -66,6 +68,14 @@ public:
 	Serie   decodage(int nbreg0, int bit);
 	Serie	ecretage(float mini, float maxi);
 
+	// filtering ans smoothing functions
+	void	lissSA(Serie yp, int largeur, bool causal = true, bool dernier = true);
+	void	lissSG(Serie yp, int largeur, int degre, bool causal = true, bool dernier = true);
+	void	lissGA(Serie yp, int largeur, bool causal = true, bool dernier = true);
+	void	lissWA(Serie yp, int largeur, bool causal = true, bool dernier = true);
+	void	lissES(Serie yp, float alpha, bool doub, bool dernier = true);
+
+	// static functions
 	static Serie	lisSpline(Serie xp, Serie yp, float lamb);
 	static Serie	lisMA(Serie yp, Serie coef, String name, bool causal);
 	static Serie	lisSA(Serie yp, int largeur, bool causal);
@@ -76,10 +86,11 @@ public:
 
 	static float	etDiff(Serie x, Serie y);
 	static float	ecDiff(Serie x, Serie y);
-	static float	conversionb(long valeurb, float mini, float maxi, int bits);
-	static long		conversion(float valeur, float mini, float maxi, int bits);
-	static Serie	codbin(long param, int lon);
-	static long		decbin(Serie payl, int lon);
+
+	static float	conversionb(uint32_t valeurb, float mini, float maxi, int bits);
+	static uint32_t	conversion(float valeur, float mini, float maxi, int bits);
+	static Serie	codbin(uint32_t param, int lon);
+	static uint32_t	decbin(Serie payl, int lon);
 
 	static Serie	regPol(Serie xn, Serie yn, Serie xp);
 

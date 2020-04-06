@@ -3,51 +3,63 @@
 //#include <ArduinoLowPower.h>
 #include <ESP8266WiFi.h>
 
-#include "Serie.h"
-#include "Compressor.h"
-#include "Compactor.h"
+#include <Serie.h>
+#include <Compressor.h>
+#include <Compactor.h>
 
 using namespace std;
 
 void setup() {
   Serial.begin(115200);                                       
-  delay(10); Serial.println('\n');
+  delay(10); Serial.println();
 
-  // données d'exemple  
-  Serial.println("données exemple : "+'\n');
-  const int n = 16;
-  const int p = 6;
-  const int l = 2;
+  // example data  
+  Serial.println(); Serial.println("example data : "); Serial.println();
+  const int n = 16, p = 6, l = 2;
   float y0i[n] = { 2, 3.5, 5, 15, 20, 16, 18, 6, 8, 3.5, 5, 10, 12, 10, 12, 18 };
   Serie y0 = Serie(n, "y0"); y0.setSerie(y0i, n); 						                              Serial.println(y0.pr());
   Serie x0 = Serie(n, "x0", 1, 16); 								                                        Serial.println(x0.pr());
-  Serie x00 = x0 | 17;                                                                      Serial.println(x00.pr());
-	x00 |= 18;                                                                                Serial.println(x00.pr());
   Serie yt0 = y0.sousSerie(0, 6) | y0.sousSerie(9, 7); yt0.setNom("yt0"); 			            Serial.println(yt0.pr());
   Serie xt0 = x0.sousSerie(0, 6) | x0.sousSerie(9, 7); xt0.setNom("xt0"); 			            Serial.println(xt0.pr());
   Serie xtr0 = x0.sousSerie(6, 3); xtr0.setNom("xtr0"); 					                          Serial.println(xtr0.pr());
   Serie xp = Serie(p, "xp"); float xpi[p] = { 1,  4, 7, 10, 13, 16 }; xp.setSerie(xpi, p); 	Serial.println(xp.pr());
   Serie yp = Serie(p, "yp"); float ypi[p] = { 1, 12, 20, 5, 10, 17 }; yp.setSerie(ypi, p); 	Serial.println(yp.pr());
-  Serie xl = Serie(l, "xl"); xl[0] = 1; xl[1] = 16; 						                            Serial.println(xl.pr()+'\n');
+  Serie xl = Serie(l, "xl"); xl[0] = 1; xl[1] = 16; 						                            Serial.println(xl.pr()); Serial.println();
   
   
-  // exemple information 
+  // example information 
   float moy = y0.moyenne();  // 10, 25
   float ect = y0.ecartType(); //  5.67
-  Serial.println("Exemple informations : "+'\n');
-  Serial.println("moyenne : " + String(moy ) + " écart-type : " + String(ect)+'\n');
+  Serial.println("Example informations : "); Serial.println();
+  Serial.println("average : " + String(moy ) + " standard deviation : " + String(ect)); Serial.println();
 
-  // exemple création
+  // example creation
   Serie x(16, "x", 0, 15); // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
   Serie y(16, "y", 1, 20); // y : [1.00   2.27   3.53   4.80   6.07   7.33   8.60   9.87  11.13  12.40  13.67  14.93  16.20  17.47  18.73  20.00]
   Serie ym(16, "ym", y.moyenne()); //ym : [10.50  10.50  10.50  10.50  10.50  10.50  10.50  10.50  10.50  10.50  10.50  10.50  10.50  10.50  10.50  10.50]
   Serie ye = y.ecretage(5, 15); // ye : [5.00   5.00   5.00   5.00   6.07   7.33   8.60   9.87  11.13  12.40  13.67  14.93  15.00  15.00  15.00  15.00]
   Serie yc = ye + 0.4f * ym; // yc : [9.20   9.20   9.20   9.20  10.27  11.53  12.80  14.07  15.33  16.60  17.87  19.13  19.20  19.20  19.20  19.20]
+  yc.refresh(10); // yc : [10.00  9.20   9.20   9.20   9.20  10.27  11.53  12.80  14.07  15.33  16.60  17.87  19.13  19.20  19.20  19.20]
+  Serial.println("Example creation : "); Serial.println();
   Serial.println(x.pr());
   Serial.println(y.pr());
   Serial.println(ym.pr());
   Serial.println(ye.pr());
-  Serial.println(yc.pr()+'\n');
+  Serial.println(yc.pr()); Serial.println();
+
+  // example smoothing
+  bool causal = false;
+  Serie yli0 = sn.lisSA(y0, 4, causal); // ySA : [2.75   4.75   8.62  12.44  15.62  16.12  13.50  10.44   7.25   6.12   7.12   8.44  10.12  12.00  13.75  15.50]
+  Serie yli1 = sn.lisSG(y0, 5, 2, true);// ySG : [2.00   2.98   4.65  11.71  19.42  17.96  16.85  10.38   5.92   5.29   3.96   8.44  11.88  10.92  11.08  16.15]
+  Serie yli2 = sn.lisGA(y0, 5, causal); // yGA : [2.56   4.12   7.88  13.09  16.69  16.81  14.00   9.97   6.81   5.56   6.50   8.84  10.56  11.50  13.38  16.00]
+  Serie yli3 = sn.lisWA(y0, 5, causal); // yWA : [2.67   4.61   8.22  12.72  16.11  16.11  14.00   9.94   7.33   5.83   6.89   8.61  10.33  11.78  13.56  15.78]
+  Serie yli4 = sn.lisES(y0, 0.4f, true); // yES : [2.00   2.96   4.35  11.36  17.66  17.75  18.78  11.34   9.09   5.23   4.52   7.54  10.30  10.29  11.52  15.88]
+  Serial.println("Example smoothing : "); Serial.println();
+  Serial.println(yli0.pr());
+  Serial.println(yli1.pr());
+  Serial.println(yli2.pr());
+  Serial.println(yli3.pr());
+  Serial.println(yli4.pr()); Serial.println();
 
   // exemple complément de valeurs
   float yp0 = y0[5] - y0[4];
@@ -55,12 +67,10 @@ void setup() {
   Serie ytr0 = sn.intCont(xt0[5], yt0[5], yp0, x0[9], y0[9], yp1, xtr0); // ytr0 : [11.52  7.0  3.86];
   Serie y1 = y0.sousSerie(0, 6) | ytr0 | y0.sousSerie(9, 7); // y1 : [2, 3.5, 5, 15, 20, 16, 11.51, 7.0, 3.86, 3.5, 5, 10, 12, 10, 12, 18];
   Serie y2 = sn.intLin(xt0, yt0, x0); // yn : [2.0 3.5 5.0 15.0 20.0 16.0 12.9 9.8 6.6 3.5 5.0 10.0 12.0 10.0 12.0 18.0]
-  Serie yx3 = y2.intLin(xt0, yt0, x0);
-  Serial.println("exemple complément de valeurs :" +'\n');
+  Serial.println("exemple complément de valeurs :"); Serial.println();
   Serial.println(ytr0.pr());
   Serial.println(y1.pr());
-  Serial.println(y2.pr());
-  Serial.println(yx3.pr()+'\n');
+  Serial.println(y2.pr()); Serial.println();
 
   // exemple compression simple
   Serie yr = sn.regPol(x0, y0, xp); // yr : [0.81  13.49  14.63   5.89   8.62  15.69]
@@ -71,12 +81,12 @@ void setup() {
   Serie yle = sn.intPol(xl, yl, x0); // yle : [7.91   8.22   8.54   8.85   9.16   9.47   9.78  10.09  10.41  10.72  11.03  11.34  11.65  11.96  12.28  12.59]
   float etl = sn.etDiff(y0, yle); // 2.999
   float ecl = sn.ecDiff(y0, yle); //2.520
-  Serial.println("exemple compression simple : " +'\n');
+  Serial.println("exemple compression simple : "); Serial.println();
   Serial.println("ecart compression : " + String(etr) + " " + String(ecr));
   Serial.println(yre.pr());
   Serial.println(yr.pr());
   Serial.println(yle.pr());
-  Serial.println(yl.pr()+'\n');
+  Serial.println(yl.pr()); Serial.println();
 
   // exemple interpolation
   y1 = sn.intPol(xp, yp, x0); // y1 : [1.00 - 2.57   3.48  12.00  18.64  21.39  20.00  15.54   9.84   5.00   2.89   4.61  10.00  17.14  21.81  17.00]
@@ -85,12 +95,12 @@ void setup() {
   float lamb = 5;
   Serie yp2 = sn.lisSpline(xp, yp, lamb); // yp2: [2.84  10.99  14.93   9.52  11.00  15.71]
   Serie y4 = sn.intSpline(xp, yp2, x0, 0, 0); // y4 : [2.84   5.66   8.40  10.99  13.28  14.78  14.93  13.48  11.29   9.52   9.07   9.73  11.00  12.50  14.08  15.71]
-  Serial.println("exemple interpolation : " +'\n');
+  Serial.println("exemple interpolation : "); Serial.println();
   Serial.println(y1.pr());
   Serial.println(y2.pr());
   Serial.println(y3.pr());
   Serial.println(yp2.pr());
-  Serial.println(y4.pr()+'\n');
+  Serial.println(y4.pr()); Serial.println();
 
   // exemple codage
   int bit = 3;
@@ -98,122 +108,10 @@ void setup() {
   Serie ypc = payl.decodage(p, bit).denormalisation(0, 25); // ypc : [1.56  10.94  20.31   4.69  10.94  17.19]
   float ecart1 = sn.etDiff(yp, ypc); // 0.653
   float ecart2 = sn.ecDiff(yp, ypc); // 0.563
-  Serial.println("exemple codage : " +'\n');
+  Serial.println("exemple codage : "); Serial.println();
   Serial.println(payl.pr());
   Serial.println(ypc.pr());
-  Serial.println("ecart codage : " + String(ecart1) + " " + String(ecart2) +'\n');
-
-  //-----------------------------------------------------------------------------------------------------------------
-  // exemples compression (compactor, compressor)
-
-  // parametres normalistion
-  float mini = 0.0; // plage mini et maxi des mesures prise en compte(écrétage sinon)
-  float maxi = 25.0; // plage mini et maxi des mesures prise en compte(écrétage sinon)
-  // parametres compression
-  int nbreg = 8; // nombre de régression de niveau 1 ex. 8, 0 si aucune
-  int nbreg0 = 2; // nombre de points de la regression de niveau 0 (entre 2 et 10)
-  int nbreg1 = 2; // nombre de points de la regression de niveau 1 (entre 2 et 10)
-  // parametres codage
-  int bit0 = 4; // nb de bits pour les coeff de niveau 0 ex. 8
-  int bit1 = 4; // nb de bits pour les coeff de niveau 1 ex. 4
-  int bitEct = 8; // nb de bits pour l'écart-type ex. 8
-  int codageEct = 0; // codage de l'écart-type réultant (0: non, 1: oui)
-
-  //compression 1 : estimation unique, un seul point (moyenne)
-  {
-    nbreg = 0;
-    nbreg0 = 1;
-    bit0 = 3;
-    Compactor comp(nbreg0, mini, maxi, bit0, bitEct, codageEct);
-    String res = comp.calcul(y0, true);
-    y1 = comp.simul(); // [10.94 ... 10.94]
-    Serie y11 = comp.decompressY0(comp.compress(), y0.len()); // valeurs idem;
-    Serie ectc1 = comp.ecartTypeSimul(false); // 5.71
-    // résultats identiques avec Compressor;
-    /*Compressor combo(nbreg, nbreg0, nbreg1, mini, maxi, bit0, bit1, bitEct, codageEct);
-    res = combo.calcul(y0, true);
-    y2 = combo.simul();
-    y21 = combo.decompressY0(combo.compress());
-    float ectc2 = combo.ecartTypeSimul(false);*/
-    Serial.println("compression 1 :" +'\n');
-    Serial.println(" bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); // bits :  3  taux : 0.012
-    Serial.println("ectc1 : " + String(ectc1[0]) + String(comp.decompressEct(comp.compress())[0])); // ectc1 : 5.71 0.0
-    Serial.println(y1.pr()); 
-    Serial.println(y11.pr()+'\n'); 
-  }
-  //compression 2 : estimation unique, deux point (linéaire)
-  {
-    nbreg = 0;
-    nbreg0 = 2;
-    bit0 = 3;
-    Compactor comp(nbreg0, mini, maxi, bit0, bitEct, codageEct);
-    String res = comp.calcul(y0, true);
-    y1 = comp.simul(); // [7.81, 8.23, 8.65, 9.06, 9.48, 9.90, 10.31, 10.73, 11.15, 11.56, 11.98, 12.40, 12.81, 13.23, 13.64, 14.06]
-    Serie ectc1 = comp.ecartTypeSimul(false); // 5.55
-    // résultats identiques avec Compressor
-    Serial.println("compression 2 :" +'\n');
-    Serial.println("bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); //bits :  6  taux : 0.023
-    Serial.println("ectc1 : " + String(ectc1[0]) + String(comp.decompressEct(comp.compress())[0])); // ectc1 : 5.55 0.0
-    Serial.println(y1.pr()+'\n');
-  }
-  //compression 3 : estimation unique, six points (polynomiale)
-  {
-    nbreg = 0;
-    nbreg0 = 6;
-    bit0 = 3;
-    Compactor comp(nbreg0, mini, maxi, bit0, bitEct, codageEct);
-    String res = comp.calcul(y0, true);
-    y1 = comp.simul(); // [1.56   5.12  10.00  14.06  16.20  16.09  14.06  10.83   7.38   4.69   3.62   4.67   7.81  12.26  16.33  17.19]
-    Serie ectc1 = comp.ecartTypeSimul(false); // 3.12
-    // résultats identiques avec Compressor
-    Serial.println("compression 3 : " +'\n');
-    Serial.println("bits : " + String(comp.taillePayload()) + " taux : " + String(comp.tauxCompression())); //bits : 18  taux :  0.070
-    Serial.println("ectc1 : " + String(ectc1[0]) + String(comp.decompressEct(comp.compress())[0])); // ectc1 : 3.12 0.0
-    Serial.println(y1.pr()+'\n');
-  }
-  //compression 4 : estimation unique, seize points (codage de chaque point)
-  {
-    nbreg = 16;
-    nbreg0 = 0;
-    nbreg1 = 1;
-    bit1 = 3;
-    Compressor combo(nbreg, nbreg0, nbreg1, mini, maxi, bit0, bit1, bitEct, codageEct);
-    String res = combo.calcul(y0, true);
-    y2 = combo.simul(); // [1.56   4.69   4.69  14.06  20.31  17.19  17.19   4.69   7.81   4.69   4.69  10.94  10.94  10.94  10.94  17.19]
-    Compressor combo2(nbreg, nbreg0, nbreg1, mini, maxi, bit0, bit1, bitEct, codageEct);
-    Serie y21 = combo2.decompressY0(combo.compress(), n);
-    Serie ectc2 = combo.ecartTypeSimul(false);
-    float precision = combo.precisionCodage();
-
-    Serial.println("compression 4 : " +'\n');
-    Serial.println("bits : " + String(combo.taillePayload()) + " taux : " + String(combo.tauxCompression())); // bits :  48  taux : 0.188
-    Serial.println("ectc2, precision : " + String(ectc2[0]) + String(combo.decompressEct(combo.compress())[0]) + " " + String(precision)); // ectc2 : 0.89 0.0 3.57
-    Serial.println(y2.pr());
-    Serial.println(y21.pr());
-    Serial.println(combo.compress().pr()+'\n');
-  }
-  //compression 5 : estimation mixte, un point (moyenne) puis quatre interpolations linéaires
-  {
-    nbreg = 4;
-    nbreg0 = 1;
-    nbreg1 = 2;
-    bit1 = 2;
-    bit0 = 3;
-    Compressor combo(nbreg, nbreg0, nbreg1, mini, maxi, bit0, bit1, bitEct, codageEct);
-    String res = combo.calcul(y0, true);
-    y2 = combo.simul(); // [2.37   6.18   9.99  13.79  19.51  15.70  11.89   8.08   8.08   8.08   8.08   8.08   8.08   9.99  11.89  13.79]
-    Compressor combo2(nbreg, nbreg0, nbreg1, mini, maxi, bit0, bit1, bitEct, codageEct);
-    Serie y21 = combo2.decompressY0(combo.compress(), n);
-    Serie ectc2 = combo.ecartTypeSimul(false);
-    float precision = combo.precisionCodage();
-
-    Serial.println("compression 5 : " +'\n');
-    Serial.println("bits : " + String(combo.taillePayload()) + " taux : " + String(combo.tauxCompression())); // bits :  27  taux : 0.11
-    Serial.println("ectc2, precision : " + String(ectc2[0]) + String(combo.decompressEct(combo.compress())[0]) + " " + String(precision)); // ectc2 : 2.94 0.0 7.62
-    Serial.println(y2.pr());
-    Serial.println(y21.pr());
-    Serial.println(combo.compress().pr()+'\n');
-  }
+  Serial.println("ecart codage : " + String(ecart1) + " " + String(ecart2)); Serial.println();
 }
 
 void loop() {
