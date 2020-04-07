@@ -225,49 +225,48 @@ Trois types d'objets sont utilisés :
 # Objet Mesure
 L'objet Mesure se compose de la liste des données qui définissent une mesure.
 
-## Princie de representation
-L'objet Mesure est composé des arguments suivants :
+## Principe de representation
+L'objet Mesure est composé des attributs suivants :
 * **Nom :** Chaine de caractères (nom de la mesure)
 * liste d'objets Serie definie par
    * **Series :** liste de Serie
    * **NbSer :** Nombre de Serie de la liste
    * **LenSer :** Nombre de valeurs qui composent les Serie de la liste
-* list of attributes (String) define with
-   * **Strs :** list of String
-   * **NameStrs :** list of String (name of each String)
-   * **NbStr :** Number of attributes String
-* list of attributes (Float) define with
-   * **Atts :** list of Float
-   * **NameAtts :** list of String (name of each Float)
-   * **NbAtt :** Number of attributes Float
+* liste des attributs (String) définis par
+   * **Strs :** liste de String
+   * **NameStrs :** liste de String (nom de chaque String)
+   * **NbStr :** Nombre des attributs de type String
+* liste des attributs (Float) définis par
+   * **Atts :** liste de Float
+   * **NameAtts :** liste de String (nom de chaque Float)
+   * **NbAtt :** Nombre des attributs de type Float
 
-## Creation and update functions
-* **constructor :** Several creation modes are possible
-    * Empty Mesure
-    * Mesure with number and lenght of data but without names
-    * Mesure with number, lenght and name of data
+## Fonctions de création et de lecture
+* **constructeur :** Plusieurs modes de création sont possibles
+    * Mesure vide
+    * Mesure avec le nombre et longueur des données mais sans les noms
+    * Mesure complète (avec nombre, longueur et noms)
 
-* **operators :** The operators [] is used to access to the values of the series.
+* **operateurs :** The operators [] is used to access to the values of the series.
 
-* **update :** The functions are as follows:
-    * **refresh()**: Add a new value and delete the oldest for all series
-    * **init()**: initialization for names and values 
-    * **initNoms()**: initialization for names 
-    * **initSeries()**: initialization for values of series 
-    * **setVal()**: value setter for string and float
+* **mise à jour :** Les fonctions sont les suivantes :
+    * **refresh()**: Ajoute une nouvelle valeur à toutes les Serie et supprime la dernière
+    * **init()** : initialisation des noms et valeurs
+    * **initNoms()**: initialisation des noms 
+    * **initSeries()** : initialisation de la liste des valeurs des séries
+    * **setVal()**: initialisation des valeurs des attributs string et float
     
-* **getters :** The functions are as follows:
-    * **getString()**: value of string attribute
-    * **getFloat()**: value of float attribute
-    * **getNom()**: name of the series
+* **consultation :** Les fonctions sont les suivantes :
+    * **getString()**: valeur de l'attribut string
+    * **getFloat()**: valeur de l'attribut float
+    * **getNom()**: nom des series
 
-## Functions for analyzing a Mesure
-* **pr()**: display of the mesure
-* **json()**: display of the mesure with Json structure
+## Fonctions d'analyse d'une Mesure
+* **pr()**: affichage de la Mesure
+* **json()**: affichage de la Mesure au format Json
 
-## Use
-See the examples given on the use of the Mesure object.
-
+## Utilisation
+Voir les exemples donnés sur l'utilisation de l'objet Mesure.
 
 # Objet Serie
 Les séries temporelles comprennent une suite de valeurs numériques.
@@ -309,6 +308,7 @@ L'affectation (opérateur = surchargé) est utilisée pour copier une série dan
 * **etDiff()** : racine carrée de la moyenne des carrés des écarts entre les deux séries  
 ### Autre
 * **pr()** : affichage de la série
+* **json()**: affichage de la série au format Json
 * **autoCorrelation()** : à venir 
 
 ## Fonctions de transformation d'une série
