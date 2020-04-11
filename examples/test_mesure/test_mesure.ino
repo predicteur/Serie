@@ -21,6 +21,7 @@ String liste[6] = { "valeurMin", "valeurMax", "capteur", "type", "valeur", "vale
 String listenot[4] = { "valeurMin", "valeurMax", "type", "valeur" };
 String res;
 SigfoxMessage sigMes;
+boolean debut = true;
 
 // init Mesure
 Mesure mes = Mesure(2, 2, 2, histo, "Temperature", liste);
@@ -55,7 +56,8 @@ void loop() {
 	//Mesure update
 	mes["valeur"][0] = temp;
 	mes["valeur"] = mes["valeur"].ecretage(mes.getFloat("valeurMin"), mes.getFloat("valeurMax"));
-	mes["valeurFiltree"].lissES(mes["valeur"], alpha, false);
+	mes["valeurFiltree"].lissES(mes["valeur"], debut, alpha, false);
+	debut = false;
 
 	//send "valeur filtree" with sigfox
 	if (compteur >= histo) {

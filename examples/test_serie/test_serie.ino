@@ -53,7 +53,7 @@ void setup() {
   Serie yli1 = sn.lisSG(y0, 5, 2, true);// ySG : [2.00   2.98   4.65  11.71  19.42  17.96  16.85  10.38   5.92   5.29   3.96   8.44  11.88  10.92  11.08  16.15]
   Serie yli2 = sn.lisGA(y0, 5, causal); // yGA : [2.56   4.12   7.88  13.09  16.69  16.81  14.00   9.97   6.81   5.56   6.50   8.84  10.56  11.50  13.38  16.00]
   Serie yli3 = sn.lisWA(y0, 5, causal); // yWA : [2.67   4.61   8.22  12.72  16.11  16.11  14.00   9.94   7.33   5.83   6.89   8.61  10.33  11.78  13.56  15.78]
-  Serie yli4 = sn.lisES(y0, 0.4f, true); // yES : [2.00   2.96   4.35  11.36  17.66  17.75  18.78  11.34   9.09   5.23   4.52   7.54  10.30  10.29  11.52  15.88]
+  Serie yli4 = sn.lisES(y0, false, 0.4f, true); // yES : [2.00   2.96   4.35  11.36  17.66  17.75  18.78  11.34   9.09   5.23   4.52   7.54  10.30  10.29  11.52  15.88]
   Serial.println("Example smoothing : "); Serial.println();
   Serial.println(yli0.pr());
   Serial.println(yli1.pr());

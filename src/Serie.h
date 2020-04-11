@@ -73,7 +73,7 @@ public:
 	void	lissSG(Serie yp, int largeur, int degre, bool causal = true, bool dernier = true);
 	void	lissGA(Serie yp, int largeur, bool causal = true, bool dernier = true);
 	void	lissWA(Serie yp, int largeur, bool causal = true, bool dernier = true);
-	void	lissES(Serie yp, float alpha, bool doub, bool dernier = true);
+	void	lissES(Serie yp, bool debut, float alpha, bool doub, bool dernier = true);
 
 	// static functions
 	static Serie	lisSpline(Serie xp, Serie yp, float lamb);
@@ -82,7 +82,7 @@ public:
 	static Serie	lisSG(Serie yp, int largeur, int degre, bool causal);
 	static Serie	lisGA(Serie yp, int largeur, bool causal);
 	static Serie	lisWA(Serie yp, int largeur, bool causal);
-	static Serie	lisES(Serie yp, float alpha, bool doub);
+	static Serie	lisES(Serie yp, bool debut, float alpha, bool doub);
 
 	static float	etDiff(Serie x, Serie y);
 	static float	ecDiff(Serie x, Serie y);

@@ -34,6 +34,8 @@ public:
 	// operator overloaded
 	Serie&	operator[](String nom);
 	Serie	operator[](String nom) const;
+	Serie&	operator[](int num);
+	Serie	operator[](int num) const;
 
 	// update
 	void		init(String* liste);
@@ -44,8 +46,8 @@ public:
 	void		refresh(float valeur);
 
 	// getters
-	String		getString(String name);
-	float		getFloat(String name);
+	String		getValS(String name);
+	float		getValF(String name);
 
 	// analysing and transformation functions
 	String pr();

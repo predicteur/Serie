@@ -59,6 +59,8 @@ Serie	Mesure::operator[](String nom) const {
 	for (int i = 0; i < NBSER; i++) if (SERIES[i].getNom() == nom) return SERIES[i];
 	return SERIES[0];
 }
+Serie&	Mesure::operator[](int num) { return SERIES[num]; }
+Serie	Mesure::operator[](int num) const { return SERIES[num]; }
 
 //******************************************************************************
 //* Class Functions
@@ -82,8 +84,8 @@ void	Mesure::initNoms(String* liste) {
 */
 void	Mesure::setVal(String name, float val) { for (int i = 0; i < NBATT; i++) if (NAMEATTS[i] == name) ATTS[i] = val; }
 void	Mesure::setVal(String name, String val) { for (int i = 0; i < NBSTR; i++) if (NAMESTRS[i] == name) STRS[i] = val; }
-String  Mesure::getString(String name) { for (int i = 0; i < NBSTR; i++) if (NAMESTRS[i] == name) return STRS[i]; return ""; }
-float   Mesure::getFloat(String name) { for (int i = 0; i < NBATT; i++) if (NAMEATTS[i] == name) return ATTS[i]; return 0; }
+String  Mesure::getValS(String name) { for (int i = 0; i < NBSTR; i++) if (NAMESTRS[i] == name) return STRS[i]; return ""; }
+float   Mesure::getValF(String name) { for (int i = 0; i < NBATT; i++) if (NAMEATTS[i] == name) return ATTS[i]; return 0; }
 void	Mesure::initSeries(float deb, float fin) { for (int i = 0; i < NBSER; i++) SERIES[i].init(deb, fin); }
 //-----------------------------------------------------------------------------------------------------------------------------
 /* Add a new value in all the Serie and delete the oldest

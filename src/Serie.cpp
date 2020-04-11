@@ -278,9 +278,10 @@ void  Serie::lissWA(Serie yp, int larg, bool causal, bool dernier) {
 	if (dernier) SERIE[0] = lisWA(yp, larg, causal)[0];
 	else setSerie(lisWA(yp, larg, causal).serie(), yp.len());
 }
-void  Serie::lissES(Serie yp, float alpha, bool doub, bool dernier) {
-	if (dernier) SERIE[0] = lisES(yp, alpha, doub)[0];
-	else setSerie(lisES(yp, alpha, doub).serie(), yp.len());
+void  Serie::lissES(Serie yp, bool debut, float alpha, bool doub, bool dernier) {
+	if (debut and dernier) SERIE[0] = yp[0];
+	else if (dernier) SERIE[0] = alpha * yp[0] + (1.0f - alpha)*SERIE[1];
+	else setSerie(lisES(yp, debut, alpha, doub).serie(), yp.len());
 }
 
 //******************************************************************************
@@ -579,12 +580,14 @@ Serie	Serie::lisWA(Serie yp, int largeur, bool causal) {
 //-----------------------------------------------------------------------------------------------------------------------------
 /* Generation of a smoothed series by exponential smoothing filter
 @arg yp : coordinate of the points
+@arg debut : first use
 @arg alpha : degree of weighting decrease, a constant smoothing factor between 0 and 1
 @arg doub : True for Double exponential smoothing, False for Basic exponential smoothing
 @result : y-coordinate of the new filtered points
 */
-Serie	Serie::lisES(Serie yp, float alpha, bool doub) {
+Serie	Serie::lisES(Serie yp, bool debut, float alpha, bool doub) {
 	Serie ypf1(yp.len(), "ypf1", yp[0]), ypf2(yp.len(), "ypf2", yp[0]), ypf;
+	if (debut) { ypf1[1] = yp[0]; ypf2[1] = yp[0]; }
 	for (int i = yp.len() - 2; i >= 0; i--) {
 		ypf1[i] = alpha * yp[i] + (1.0f - alpha)*ypf1[i + 1];
 		ypf2[i] = alpha * ypf1[i] + (1.0f - alpha)*ypf2[i + 1];
