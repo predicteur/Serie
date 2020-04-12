@@ -93,12 +93,15 @@ void	Mesure::initSeries(float deb, float fin) { for (int i = 0; i < NBSER; i++) 
 void	Mesure::refresh(float valeur) { for (int i = 0; i < NBSER; i++) SERIES[i].refresh(valeur); }
 //-----------------------------------------------------------------------------------------------------------------------------
 /* Print Mesure : generate a String with name and values
+@type : selector for data to print ("all", "att", "str", "atr", "ser")
 */
-String  Mesure::pr() {
+String  Mesure::pr(String type, int lenserie) {
+	int lens = LENSER;
 	String stri = "MESURE : " + NOM + "\n";
-	for (int i = 0; i < NBATT; i++)	stri += NAMEATTS[i] + " : " + String(ATTS[i]) + "\n";
-	for (int i = 0; i < NBSTR; i++) stri += NAMESTRS[i] + " : " + STRS[i] + "\n";
-	for (int i = 0; i < NBSER; i++) stri += SERIES[i].pr() + "\n";
+	if (lenserie > 0) lens = lenserie;
+	if (type == "att" or type == "atr" or type == "all") for (int i = 0; i < NBATT; i++)	stri += NAMEATTS[i] + " : " + to_string(ATTS[i]) + "\n";
+	if (type == "str" or type == "atr" or type == "all") for (int i = 0; i < NBSTR; i++) stri += NAMESTRS[i] + " : " + STRS[i] + "\n";
+	if (type == "ser" or type == "all") for (int i = 0; i < NBSER; i++) stri += SERIES[i].pr(lens) + "\n";
 	return stri;
 }
 //-----------------------------------------------------------------------------------------------------------------------------

@@ -43,16 +43,15 @@ public:
 	void		initSeries(float deb, float fin);
 	void		setVal(String name, float val);
 	void		setVal(String name, String val);
-	void		refresh(float valeur);
+	void		refresh(float valeur = 0.0f);
 
 	// getters
 	String		getValS(String name);
 	float		getValF(String name);
 
 	// analysing and transformation functions
-	String pr();
+	String pr(String type = "all", int lenserie = 1);
 	String json(bool titre, int lenserie, String* liste, int nbliste);
-	String json(int lenserie);
-	String json();
+	String json(int lenserie = 1);
 };
 #endif

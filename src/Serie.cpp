@@ -111,9 +111,10 @@ void Serie::init(float dep) { init(dep, dep); }
 //-----------------------------------------------------------------------------------------------------------------------------
 /* Print Serie : generate a string with name and values
 */
-String	Serie::pr() {
+String	Serie::pr(int lenserie) {
 	String valeur = NOM + " :[ ";
-	for (int i = 0; i < LEN; i++) valeur += String(SERIE[i]) + String(", ");
+	if (lenserie <= 1) valeur += String(SERIE[0]) + String(" ");
+	else for (int i = 0; i < LEN; i++) valeur += String(SERIE[i]) + String(", ");
 	valeur += "] ";
 	return valeur;
 }

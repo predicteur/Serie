@@ -43,8 +43,8 @@ public:
 	// update
 	void	init(float dep, float fin);
 	void	init(float dep);
-	void	refresh(float valeur);
-	void	complete(float valeur);
+	void	refresh(float valeur = 0.0f);
+	void	complete(float valeur = 0.0f);
 	Serie	copie();
 	void	setNom(String nom);
 	void	setSerie(float* serie, int len);
@@ -56,8 +56,8 @@ public:
 	float*  serie();
 
 	// analysing and transformation functions
-	String	pr();
-	String	json(int lenserie);
+	String	pr(int lenserie = 1);
+	String	json(int lenserie = 1);
 	float   ecDiff(Serie y);
 	float   etDiff(Serie y);
 	float	moyenne();
@@ -77,11 +77,11 @@ public:
 
 	// static functions
 	static Serie	lisSpline(Serie xp, Serie yp, float lamb);
-	static Serie	lisMA(Serie yp, Serie coef, String name, bool causal);
-	static Serie	lisSA(Serie yp, int largeur, bool causal);
-	static Serie	lisSG(Serie yp, int largeur, int degre, bool causal);
-	static Serie	lisGA(Serie yp, int largeur, bool causal);
-	static Serie	lisWA(Serie yp, int largeur, bool causal);
+	static Serie	lisMA(Serie yp, Serie coef, String name, bool causal = true);
+	static Serie	lisSA(Serie yp, int largeur, bool causal = true);
+	static Serie	lisSG(Serie yp, int largeur, int degre, bool causal = true);
+	static Serie	lisGA(Serie yp, int largeur, bool causal = true);
+	static Serie	lisWA(Serie yp, int largeur, bool causal = true);
 	static Serie	lisES(Serie yp, bool debut, float alpha, bool doub);
 
 	static float	etDiff(Serie x, Serie y);
